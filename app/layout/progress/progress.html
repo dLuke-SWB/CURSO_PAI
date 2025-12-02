@@ -1,0 +1,26 @@
+<div class="page-bg w-100 h-100">
+    <div class="container pt-5">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 cursos-table">
+            <!-- COLUNA ÚNICA: CURSO COMPLETO -->
+            <ng-container matColumnDef="curso">
+                <th mat-header-cell *matHeaderCellDef class="header-title">
+                    Seus Cursos
+                </th>
+                <td mat-cell *matCellDef="let curso" (click)="abrirCurso(curso)" class="curso-row">
+                    <div class="curso-box">
+                        <img [src]="curso.thumb" alt="thumb" class="thumb">
+                        <div class="curso-info">
+                            <span class="curso-nome text-white-50">{{ curso.nome }}</span>
+                            <span class="curso-desc text-white-50">{{ curso.descricao }}</span>
+                            <span class="curso-progresso">
+                                Progresso: {{ curso.progresso }}
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row        *matRowDef="let row; columns: displayedColumns;" class="curso-row"></tr>
+        </table>
+    </div>
+</div>

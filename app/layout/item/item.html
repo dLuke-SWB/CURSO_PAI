@@ -1,0 +1,8 @@
+<div
+  class="item-card"
+  [class.selected]="isSelected"
+  (click)="selecionarCurso()"
+  [ngStyle]="{
+    'background-image': 'url(' + data.thumb + ')'
+  }">
+</div>
