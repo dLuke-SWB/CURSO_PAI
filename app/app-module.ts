@@ -26,7 +26,7 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
   providers: [
     {
       // @ts-ignore
-      provide: SocialAuthServiceConfig,
+      provide: 'SocialAuthServiceConfig',
       useValue: {
         autoLogin: false,
         providers: [
@@ -47,4 +47,5 @@ import { GoogleLoginProvider } from '@abacritt/angularx-social-login';
   ],
   bootstrap: [App]
 })
+
 export class AppModule { }
