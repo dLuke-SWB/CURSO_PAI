@@ -1,0 +1,631 @@
+.player-container {
+  display: flex;
+  height: 95vh;
+  background-color: #0f0f0f;
+  color: white;
+}
+
+/*** VIDEO AREA  ***/
+.video-area {
+  flex: 3;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*** SIDEBAR ***/
+.sidebar {
+  flex: 1.2;
+  background: #121212;
+  border-left: 1px solid #333;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.curso-nome {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.curso-desc {
+  opacity: 0.7;
+  margin-bottom: 20px;
+}
+
+.aulas-lista {
+  margin-top: 10px;
+}
+
+.aula-item {
+  padding: 15px;
+  border-bottom: 1px solid #2b2b2b;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  justify-content: space-between;
+}
+
+.aula-item:hover {
+  background: #1b1b1b;
+}
+
+.aula-item.ativa {
+  background: #2f2f2f;
+  border-left: 3px solid #8ab4ff;
+}
+
+.numero {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.titulo {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.duracao {
+  opacity: 0.6;
+}
+
+/*** BOTÃO VOLTAR ***/
+.btn-voltar {
+  margin-top: 25px;
+  width: 100%;
+  padding: 12px;
+  background: #333;
+  border: 0;
+  color: white;
+  font-weight: 700;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.btn-voltar:hover {
+  background: #444;
+}
+
+// ... (Seus estilos anteriores de container, video, etc) ...
+
+/* --- OVERRIDES DO ANGULAR MATERIAL (DARK THEME) --- */
+
+// Remove bordas e fundos padrão
+.mat-accordion .mat-expansion-panel {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #333;
+    border-radius: 0 !important;
+    color: white;
+}
+
+// Estilo do Cabeçalho (Sessão)
+.mat-expansion-panel-header {
+    background-color: #1f1f1f; // Cinza escuro para diferenciar
+    height: 56px !important;
+    padding: 0 16px;
+    font-family: inherit; // Usa a fonte do seu app
+    
+    &:hover {
+        background-color: #2a2a2a !important;
+    }
+}
+
+// Texto do Título
+.mat-expansion-panel-header-title {
+    color: #e0e0e0 !important;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+// Ícone da setinha (Indicador)
+.mat-expansion-indicator::after {
+    color: #a0a0a0 !important; // Cor da seta
+}
+
+// Corpo do painel (Onde ficam as aulas)
+::ng-deep .mat-expansion-panel-body {
+    background-color: #121212;
+    padding: 0 !important; // Remove padding padrão para as aulas irem de ponta a ponta
+}
+
+/* --- ESTILO DAS AULAS (Mantido e ajustado) --- */
+.aula-item {
+    padding: 12px 15px 12px 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid transparent;
+    font-size: 14px;
+    color: #ccc;
+    border-bottom: 1px solid #1a1a1a; // Separador sutil entre aulas
+
+    &:hover {
+        background: #1b1b1b;
+        color: white;
+    }
+
+    &.ativa {
+        background: #252525;
+        border-left: 3px solid #ffb74a;
+        color: #ffb74a;
+        font-weight: 600;
+        
+        .play-icon {
+            color: #ffb74a;
+        }
+    }
+}
+
+.duracao {
+    opacity: 0.5;
+    font-size: 12px;
+}
+
+/* --- ÁREA DO VÍDEO --- */
+.video-area {
+    flex: 3;
+    background: #000;
+    position: relative; /* Importante para posicionar os controles absolutos */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.video-player {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+}
+
+/* --- CONTROLES CUSTOMIZADOS --- */
+.custom-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 20px 20px 10px 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* Mostra controles se tiver a classe visible */
+    &.visible {
+        opacity: 1;
+    }
+}
+
+/* LINHA DOS BOTÕES */
+.controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.left-controls, .right-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    opacity: 0.9;
+    transition: 0.2s;
+
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+.text-btn {
+    font-size: 16px;
+    font-weight: bold;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.time-display {
+    font-size: 14px;
+    font-family: monospace;
+    opacity: 0.8;
+}
+
+/* --- BARRA DE PROGRESSO ROXA --- */
+.progress-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilizando o Input Range para parecer uma barra de progresso */
+.progress-bar {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    /* O background será definido dinamicamente no TS para fazer o efeito roxo */
+    background: #444; 
+    transition: height 0.2s;
+}
+
+.progress-bar:hover {
+    height: 8px;
+}
+
+/* Bolinha (Thumb) do slider */
+.progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #f79055; /* Roxo Claro */
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(247, 144, 85, 0.5);
+    transition: transform 0.2s;
+}
+
+.progress-bar:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+}
+
+/* --- MANTENHA A SIDEBAR IGUAL (Código anterior) --- */
+.player-container { display: flex; height: 95vh; background-color: #0f0f0f; color: white; }
+.sidebar { flex: 1.2; background: #121212; border-left: 1px solid #333; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
+/* ... restante do CSS da sidebar que já fizemos ... */
+
+/* --- FEEDBACK VISUAL (ESTILO YOUTUBE PREMIUM) --- */
+.skip-feedback {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0%; /* Começa sem largura para animar a abertura */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5); /* Fundo um pouco mais escuro */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+    transition: width 0.2s ease, opacity 0.2s ease; /* Anima a largura suavemente */
+    backdrop-filter: blur(2px); /* Efeito de vidro se o navegador suportar */
+    overflow: hidden; /* Garante que o círculo não vaze */
+
+    /* LADO ESQUERDO */
+    &.left {
+        left: 0;
+        border-top-right-radius: 100% 50%; /* Curva mais suave e vertical */
+        border-bottom-right-radius: 100% 50%;
+        
+        .feedback-content { margin-right: 20%; } /* Ajuste fino de posição */
+    }
+
+    /* LADO DIREITO */
+    &.right {
+        right: 0;
+        border-top-left-radius: 100% 50%;
+        border-bottom-left-radius: 100% 50%;
+
+        .feedback-content { margin-left: 20%; }
+    }
+
+    /* ESTADO ATIVO (QUANDO APARECE) */
+    &.active {
+        width: 35%; /* Abre até 35% da tela */
+        opacity: 1;
+    }
+
+    /* CONTEÚDO */
+    .feedback-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        white-space: nowrap;
+
+        /* Container das setas para alinhá-las lado a lado */
+        div { 
+            display: flex;
+            margin-bottom: 5px;
+        }
+
+        span {
+            margin-top: 5px;
+            font-size: 14px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+
+    /* ANIMAÇÃO DAS SETAS (O SEGREDO DA BELEZA) */
+    .bi {
+        font-size: 32px;
+        opacity: 0.2; /* Começam apagadas */
+        transform: scale(0.8);
+        margin: 0 -4px; /* Junta elas um pouco */
+    }
+
+    /* Quando ativo, dispara a animação sequencial */
+    &.active .bi {
+        animation: arrowFlash 0.6s infinite;
+    }
+
+    /* Delay para criar o efeito de "onda" (1, 2, 3...) */
+    &.left.active {
+        .bi:nth-child(3) { animation-delay: 0s; }
+        .bi:nth-child(2) { animation-delay: 0.1s; }
+        .bi:nth-child(1) { animation-delay: 0.2s; }
+    }
+
+    &.right.active {
+        .bi:nth-child(1) { animation-delay: 0s; }
+        .bi:nth-child(2) { animation-delay: 0.1s; }
+        .bi:nth-child(3) { animation-delay: 0.2s; }
+    }
+}
+
+/* KEYFRAMES REFINADOS */
+@keyframes arrowFlash {
+    0% { opacity: 0.2; transform: translateX(0) scale(0.8); }
+    50% { opacity: 1; transform: translateX(0) scale(1.1); text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+    100% { opacity: 0.2; transform: translateX(0) scale(0.8); }
+}
+
+/* --- CONTROLE DE VOLUME (ESTILO YOUTUBE) --- */
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* Ao passar o mouse AQUI, o slider aparece */
+    &:hover .volume-slider-wrapper {
+        width: 80px; /* Largura que ele vai abrir */
+        margin-left: 10px;
+        opacity: 1;
+    }
+}
+
+.volume-slider-wrapper {
+    width: 0px; /* Começa fechado */
+    overflow: hidden; /* Esconde o input */
+    transition: width 0.2s ease, margin-left 0.2s ease, opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+}
+
+/* O INPUT RANGE DE VOLUME */
+.volume-slider {
+    -webkit-appearance: none;
+    width: 80px; /* Tamanho fixo interno */
+    height: 4px;
+    border-radius: 4px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background: rgba(255,255,255,0.2);
+    outline: none;
+    cursor: pointer;
+}
+
+/* Bolinha do Volume (Thumb) */
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    /* Opcional: A bolinha só aparece se passar o mouse */
+}
+
+/* --- MENU DE VELOCIDADE (DROP-UP) --- */
+
+.speed-wrapper {
+    position: relative; /* Para o menu absoluto se basear nele */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.speed-menu {
+    position: absolute;
+    bottom: 45px; /* Empurra para cima do botão */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza */
+    
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    padding: 5px 0;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 50;
+    
+    /* Animação de entrada suave */
+    animation: fadeInMenu 0.2s ease-out;
+
+    button {
+        background: transparent;
+        border: none;
+        color: #ccc;
+        padding: 8px 0;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        text-align: center;
+        width: 100%;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Estilo da opção selecionada */
+        &.active {
+            color: #f79055; /* Sua cor laranja de destaque */
+            font-weight: 800;
+        }
+    }
+}
+
+@keyframes fadeInMenu {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* --- OVERLAY DE PRÓXIMA AULA --- */
+.next-lesson-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85); /* Fundo bem escuro */
+    backdrop-filter: blur(5px);
+    z-index: 25; /* Acima do vídeo e animações, abaixo dos controles */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.next-content {
+    text-align: center;
+    color: white;
+    max-width: 80%;
+}
+
+.next-label {
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.next-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    line-height: 1.2;
+}
+
+.next-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Botão Principal (Reproduzir) */
+.btn-play-next {
+    background: white;
+    color: black;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, background 0.2s;
+
+    &:hover {
+        transform: scale(1.05);
+        background: #f0f0f0;
+    }
+
+    i { font-size: 20px; }
+}
+
+/* Botão Cancelar */
+.btn-cancel {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+        border-color: white;
+        background: rgba(255,255,255,0.1);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.aula-item {
+    /* ... seus estilos anteriores ... */
+
+    .icon-status {
+        font-size: 14px;
+        opacity: 0.7;
+        width: 16px; /* Para manter alinhamento quando ícone mudar */
+        display: inline-block;
+        text-align: center;
+    }
+
+    /* ESTILO DE AULA CONCLUÍDA */
+    &.concluida {
+        opacity: 0.6; /* Fica um pouco mais apagado */
+        
+        .icon-status {
+            color: #4caf50; /* Verde Udemy */
+            opacity: 1;
+        }
+
+        /* Se passar o mouse, volta a ficar brilhante */
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    /* AULA ATIVA (Tocando agora) GANHA PRIORIDADE */
+    &.ativa {
+        opacity: 1;
+        /* Mantém o estilo laranja que já definimos antes */
+    }
+}

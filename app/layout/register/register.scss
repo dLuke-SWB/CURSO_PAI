@@ -1,0 +1,362 @@
+/* --- ESTRUTURA GERAL --- */
+.login-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0f0f0f; /* Fundo geral escuro */
+    color: white;
+    overflow: hidden;
+}
+
+/* --- LADO ESQUERDO (FORM) --- */
+.form-side {
+    flex: 1; /* Ocupa 30-40% */
+    max-width: 700px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: #0f0f0f;
+    z-index: 2;
+}
+
+.form-content {
+    width: 100%;
+    max-width: 380px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: #f79055; /* Sua cor laranja */
+}
+
+h1 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
+.subtitle { color: #888; margin-bottom: 30px; }
+
+/* Botões Sociais */
+.social-login {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    
+    .btn-social {
+        flex: 1;
+        height: 50px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.2s;
+        
+        &:hover { background: #252525; border-color: #555; }
+    }
+}
+
+.divider {
+    text-align: center;
+    border-bottom: 1px solid #222;
+    line-height: 0.1em;
+    margin: 25px 0 35px;
+    span { background:#0f0f0f; padding:0 10px; color: #555; }
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 20px;
+    label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #ccc; }
+    input {
+        width: 100%;
+        height: 50px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 0 15px;
+        color: white;
+        outline: none;
+        transition: 0.2s;
+        
+        &:focus { border-color: #f79055; box-shadow: 0 0 0 2px rgba(247, 144, 85, 0.2); }
+    }
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 30px;
+    color: #888;
+    .forgot { color: #f79055; text-decoration: none; }
+}
+
+.btn-login {
+    width: 100%;
+    height: 50px;
+    background: #f79055; /* Laranja */
+    color: black;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.2s;
+    
+    &:hover { transform: scale(1.02); background: #ffaa75; }
+}
+
+.footer-text { margin-top: 25px; text-align: center; font-size: 14px; color: #666; a { color: white; } }
+
+
+/* --- LADO DIREITO (GRID DINÂMICO) --- */
+.visual-side {
+    flex: 1.5; /* Ocupa o restante */
+    position: relative;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 Colunas */
+    gap: 15px;
+    width: 120%; /* Um pouco maior que a tela para efeito de imersão */
+    transform: rotate(-5deg) scale(1.1); /* Leve inclinação estilosa */
+}
+
+.grid-item {
+    aspect-ratio: 9/16; /* Formato poster/vertical */
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background: #111; /* Cor de fundo enquanto carrega */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.image-wrapper {
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Começa invisível */
+    transition: opacity 0.5s ease-in-out; /* O segredo do fade suave */
+    
+    &.visible {
+        opacity: 1;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+/* Gradiente sobre o grid para o texto do formulário "respirar" */
+.overlay-gradient {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, #0f0f0f 0%, transparent 40%);
+    pointer-events: none;
+}
+
+/* ... (Estilos anteriores do wrapper, logo e h1 mantidos) ... */
+
+/* --- SOCIAL LOGIN (AJUSTADO) --- */
+.social-login {
+    margin-bottom: 25px;
+    width: 100%;
+    
+    .btn-social {
+        width: 100%;
+        height: 50px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s;
+        
+        /* Flexbox para centralizar Ícone + Texto */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px; /* Espaço entre o G e o texto */
+        
+        font-size: 16px;
+        font-weight: 600;
+
+        &:hover { 
+            background: #252525; 
+            border-color: #555; 
+        }
+
+        i {
+            font-size: 20px;
+        }
+    }
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    color: #f79055; /* Laranja */
+
+    /* EFEITO DO CURSOR NO TEXTO */
+    .typewriter {
+        border-right: 3px solid #f79055; /* O cursor laranja */
+        padding-right: 5px; /* Espaço entre a letra e o cursor */
+        animation: blinkCursor 0.8s step-end infinite; /* Animação de piscar */
+        white-space: nowrap; /* Garante que não quebre linha */
+    }
+}
+
+/* Animação do piscar (aparece e some) */
+@keyframes blinkCursor {
+    0%, 100% { border-color: #f79055; }
+    50% { border-color: transparent; }
+}
+
+/* --- CHECKBOX CUSTOMIZADO --- */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Alinha verticalmente */
+    font-size: 14px;
+    margin-bottom: 30px;
+    color: #888;
+
+    .forgot { 
+        color: #ccc; 
+        text-decoration: none; 
+        transition: 0.2s;
+        &:hover { color: #f79055; }
+    }
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+
+    /* 1. Esconde o input feio nativo */
+    input[type="checkbox"] {
+        display: none; 
+    }
+
+    /* 2. Estiliza o Label (Texto) */
+    label {
+        position: relative;
+        padding-left: 28px; /* Espaço para a caixinha */
+        cursor: pointer;
+        user-select: none;
+        color: #ccc;
+        font-weight: 500;
+        transition: 0.2s;
+
+        &:hover { color: white; }
+        
+        /* 3. A CAIXINHA (::before) */
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%); /* Centraliza verticalmente */
+            width: 18px;
+            height: 18px;
+            background: #1a1a1a; /* Fundo escuro */
+            border: 1px solid #444; /* Borda sutil */
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        /* 4. O "CHECK" (::after) - Desenho do V */
+        &::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 48%;
+            transform: translateY(-60%) rotate(45deg); /* Gira pra fazer o V */
+            width: 5px;
+            height: 10px;
+            border: solid #000; /* Cor do check (preto no fundo laranja fica top) */
+            border-width: 0 2px 2px 0;
+            opacity: 0; /* Invisível por padrão */
+            transition: opacity 0.2s;
+        }
+    }
+
+    /* 5. ESTADO MARCADO (CHECKED) */
+    input:checked + label {
+        &::before {
+            background: #f79055; /* Fundo Laranja */
+            border-color: #f79055;
+            box-shadow: 0 0 10px rgba(247, 144, 85, 0.4); /* Glow suave */
+        }
+        &::after {
+            opacity: 1; /* Mostra o check */
+        }
+    }
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 20px;
+    label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #ccc; }
+    
+    /* WRAPPER PARA POSICIONAR O ÍCONE */
+    .password-wrapper {
+        position: relative; /* Pai relativo */
+        width: 100%;
+    }
+
+    input {
+        width: 100%;
+        height: 50px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 8px;
+        padding: 0 15px;
+        /* Padding extra na direita para o texto não bater no ícone */
+        padding-right: 45px; 
+        color: white;
+        outline: none;
+        transition: 0.2s;
+        
+        &:focus { border-color: #f79055; box-shadow: 0 0 0 2px rgba(247, 144, 85, 0.2); }
+    }
+
+    /* O BOTÃO DO OLHO */
+    .btn-eye {
+        position: absolute;
+        right: 15px; /* Cola na direita */
+        top: 50%;
+        transform: translateY(-50%); /* Centraliza verticalmente */
+        background: transparent;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        font-size: 18px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        transition: 0.2s;
+
+        &:hover {
+            color: #f79055; /* Fica laranja no hover */
+        }
+    }
+}

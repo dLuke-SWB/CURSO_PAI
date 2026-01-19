@@ -1,0 +1,23 @@
+<div class="circle-wrapper">
+  <svg class="circle" width="140" height="140">
+    <circle
+      class="bg"
+      cx="70"
+      cy="70"
+      r="60"
+    ></circle>
+
+    <circle
+      class="progress"
+      cx="70"
+      cy="70"
+      r="60"
+      [attr.stroke-dasharray]="circumference"
+      [attr.stroke-dashoffset]="dashOffset"
+    ></circle>
+  </svg>
+
+  <div class="center-text">
+    {{ aulasFeitas }} / {{ aulasTotal }}
+  </div>
+</div>
