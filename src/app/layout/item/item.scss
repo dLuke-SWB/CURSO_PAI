@@ -1,0 +1,35 @@
+/* === ITEM CARD === */
+.item-card {
+    /* DESKTOP (Padrão) */
+    width: 350px; 
+    height: 500px;
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.2s;
+    flex-shrink: 0; 
+
+    /* === MOBILE (Menor que 768px) === */
+    @media (max-width: 768px) {
+        width: 160px; /* Largura reduzida para caber 2 ou 1.5 na tela */
+        height: 240px; /* Proporção mantida */
+    }
+}
+
+/* ITEM SELECIONADO OU HOVER */
+.item-card.selected {
+    border-color: #ffffff;
+    transform: scale(1.05); 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    z-index: 10;
+}
+
+.item-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    z-index: 10;
+}

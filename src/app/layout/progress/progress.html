@@ -1,0 +1,40 @@
+<div class="page-bg">
+    <div class="container-fluid content-area">
+        
+        <div class="table-wrapper">
+            <table mat-table [dataSource]="dataSource" class="cursos-table">
+                
+                <ng-container matColumnDef="curso">
+                    <th mat-header-cell *matHeaderCellDef class="header-title">
+                        Seus Cursos e Progresso
+                    </th>
+                    
+                    <td mat-cell *matCellDef="let curso" (click)="abrirCurso(curso)" class="curso-row">
+                        <div class="curso-box">
+                            <img [src]="curso.thumb" alt="thumb" class="thumb">
+                            
+                            <div class="curso-info">
+                                <span class="curso-nome">{{ curso.nome }}</span>
+                                
+                                <span class="curso-desc">{{ curso.descricao }}</span>
+                                
+                                <span class="curso-progresso">
+                                    <i class="bi bi-bar-chart-fill me-1"></i>
+                                    {{ curso.progresso }} aulas concluídas
+                                </span>
+                            </div>
+                            
+                            <div class="arrow-icon">
+                                <i class="bi bi-chevron-right"></i>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="curso-row-container"></tr>
+            </table>
+        </div>
+
+    </div>
+</div>

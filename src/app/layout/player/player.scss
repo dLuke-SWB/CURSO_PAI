@@ -1,0 +1,307 @@
+/* === VARIÁVEIS GERAIS === */
+.player-container {
+    display: flex;
+    height: 95vh; /* Altura total da área útil */
+    background-color: #0f0f0f;
+    color: white;
+    overflow: hidden; /* Evita scroll na página inteira */
+}
+
+/*** ÁREA DO VÍDEO (DESKTOP: Esquerda / MOBILE: Topo) ***/
+.video-area {
+    flex: 3; /* Ocupa a maior parte no desktop */
+    background: #000;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.video-player {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    object-fit: contain; /* Garante que o vídeo não corte */
+}
+
+/*** SIDEBAR (DESKTOP: Direita / MOBILE: Baixo) ***/
+.sidebar {
+    flex: 1.2; /* Largura proporcional no desktop */
+    background: #121212;
+    border-left: 1px solid #333;
+    padding: 0; /* Remove padding global para usar no conteúdo */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Scroll vertical na lista */
+    
+    /* Scrollbar estilizada */
+    &::-webkit-scrollbar { width: 8px; }
+    &::-webkit-scrollbar-track { background: #121212; }
+    &::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+}
+
+/* Conteúdo interno da sidebar com padding */
+.sidebar-content {
+    padding: 20px;
+}
+
+.curso-nome { font-size: 18px; font-weight: 700; margin-bottom: 5px; line-height: 1.3; }
+.curso-desc { opacity: 0.7; font-size: 14px; margin-bottom: 20px; }
+
+/* Lista de Aulas */
+.aulas-lista { flex: 1; }
+
+/* Overrides do Angular Material */
+.mat-accordion .mat-expansion-panel {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #222;
+    border-radius: 0 !important;
+    color: white;
+}
+
+.mat-expansion-panel-header {
+    background-color: #1f1f1f;
+    height: 50px !important;
+    padding: 0 16px;
+    &:hover { background-color: #2a2a2a !important; }
+}
+
+.mat-expansion-panel-header-title { color: #e0e0e0 !important; font-weight: 600; font-size: 14px; }
+.mat-expansion-indicator::after { color: #a0a0a0 !important; }
+::ng-deep .mat-expansion-panel-body { background-color: #121212; padding: 0 !important; }
+
+/* Item de Aula */
+.aula-item {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid transparent;
+    font-size: 14px;
+    color: #ccc;
+    border-bottom: 1px solid #1a1a1a;
+
+    &:hover { background: #1b1b1b; color: white; }
+    
+    &.ativa {
+        background: #252525;
+        border-left: 3px solid #ffb74a;
+        color: #ffb74a;
+        font-weight: 600;
+        .icon-status { color: #ffb74a; }
+    }
+
+    &.concluida {
+        opacity: 0.7;
+        .icon-status { color: #4caf50; opacity: 1; }
+    }
+}
+
+.duracao { opacity: 0.5; font-size: 12px; }
+.icon-status { margin-right: 10px; width: 16px; text-align: center; }
+
+/*** CONTROLES DE VÍDEO ***/
+.custom-controls {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 10px 15px;
+    opacity: 0; transition: opacity 0.3s ease;
+    display: flex; flex-direction: column; gap: 5px;
+    &.visible { opacity: 1; }
+}
+
+.controls-row { display: flex; justify-content: space-between; align-items: center; color: white; }
+.left-controls, .right-controls { display: flex; align-items: center; gap: 15px; }
+
+.btn-icon {
+    background: none; border: none; color: white; font-size: 24px;
+    cursor: pointer; padding: 0; display: flex; align-items: center;
+    opacity: 0.9; transition: 0.2s;
+    &:hover { opacity: 1; transform: scale(1.1); }
+}
+
+.text-btn { font-size: 14px; font-weight: bold; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; }
+.time-display { font-size: 12px; font-family: monospace; opacity: 0.8; margin-left: 5px; }
+
+/* Barra de Progresso */
+.progress-container { width: 100%; display: flex; align-items: center; margin-bottom: 5px; }
+.progress-bar {
+    -webkit-appearance: none; width: 100%; height: 4px; border-radius: 5px;
+    cursor: pointer; outline: none; background: #444; transition: height 0.2s;
+}
+.progress-bar:hover { height: 6px; }
+.progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+    background: #f79055; cursor: pointer; box-shadow: 0 0 10px rgba(247, 144, 85, 0.5);
+    transition: transform 0.2s;
+}
+.progress-bar:hover::-webkit-slider-thumb { transform: scale(1.3); }
+
+/* Volume Slider */
+.volume-container { display: flex; align-items: center; position: relative; }
+.volume-slider-wrapper {
+    width: 0; overflow: hidden; transition: width 0.2s ease, margin-left 0.2s ease;
+    display: flex; align-items: center; margin-left: 0;
+}
+.volume-container:hover .volume-slider-wrapper { width: 70px; margin-left: 10px; }
+.volume-slider { -webkit-appearance: none; width: 70px; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.2); outline: none; cursor: pointer; }
+.volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: white; border-radius: 50%; cursor: pointer; }
+
+/* Speed Menu */
+.speed-wrapper { position: relative; }
+.speed-menu {
+    position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%);
+    background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(5px);
+    border-radius: 8px; padding: 5px 0; width: 80px;
+    display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    animation: fadeIn 0.2s ease; z-index: 50;
+    
+    button {
+        background: transparent; border: none; color: #ccc; padding: 8px 0;
+        font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
+        &:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        &.active { color: #f79055; font-weight: 800; }
+    }
+}
+
+/* Skip Feedback (Animação de avanço/recuo) */
+.skip-feedback {
+    position: absolute; top: 0; bottom: 0; width: 0%; height: 100%;
+    display: flex; justify-content: center; align-items: center;
+    background: rgba(0, 0, 0, 0.4); opacity: 0; pointer-events: none;
+    z-index: 20; transition: width 0.2s, opacity 0.2s; backdrop-filter: blur(2px);
+    overflow: hidden;
+
+    &.left { left: 0; border-radius: 0 50% 50% 0; .feedback-content { margin-right: 20%; } }
+    &.right { right: 0; border-radius: 50% 0 0 50%; .feedback-content { margin-left: 20%; } }
+    &.active { width: 35%; opacity: 1; }
+
+    .feedback-content {
+        display: flex; flex-direction: column; align-items: center; color: white;
+        font-weight: 700; font-size: 14px;
+        div { display: flex; margin-bottom: 5px; }
+        .bi { font-size: 28px; opacity: 0.2; margin: 0 -3px; }
+    }
+    
+    &.active .bi { animation: arrowFlash 0.6s infinite; }
+    &.left.active .bi:nth-child(3) { animation-delay: 0s; }
+    &.left.active .bi:nth-child(2) { animation-delay: 0.1s; }
+    &.left.active .bi:nth-child(1) { animation-delay: 0.2s; }
+    &.right.active .bi:nth-child(1) { animation-delay: 0s; }
+    &.right.active .bi:nth-child(2) { animation-delay: 0.1s; }
+    &.right.active .bi:nth-child(3) { animation-delay: 0.2s; }
+}
+
+@keyframes arrowFlash {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Next Lesson Overlay */
+.next-lesson-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+    z-index: 25; display: flex; justify-content: center; align-items: center;
+    animation: fadeIn 0.3s ease;
+    
+    .next-content { text-align: center; max-width: 90%; }
+    .next-label { text-transform: uppercase; font-size: 12px; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px; display: block; }
+    .next-title { font-size: 24px; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
+    .next-actions { display: flex; gap: 10px; justify-content: center; }
+    
+    .btn-play-next {
+        background: white; color: black; border: none; padding: 10px 20px;
+        border-radius: 25px; font-weight: 700; font-size: 14px; cursor: pointer;
+        display: flex; align-items: center; gap: 5px;
+        &:hover { transform: scale(1.05); background: #f0f0f0; }
+    }
+    .btn-cancel {
+        background: transparent; color: white; border: 2px solid rgba(255,255,255,0.3);
+        padding: 10px 20px; border-radius: 25px; font-weight: 600; font-size: 14px; cursor: pointer;
+        &:hover { border-color: white; }
+    }
+}
+
+.btn-voltar {
+    width: 100%; padding: 12px; margin-top: 20px;
+    background: #333; border: none; color: white; font-weight: 700;
+    border-radius: 5px; cursor: pointer; transition: 0.2s; margin-bottom: 20px;
+    &:hover { background: #444; }
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE - MOBILE (< 992px)
+   ========================================================================== */
+@media (max-width: 991px) {
+    .player-container {
+        flex-direction: column; /* Vídeo em cima, lista embaixo */
+        height: auto; /* Altura flexível */
+        min-height: 100vh;
+    }
+
+    .video-area {
+        flex: none; /* Remove o flex grow para ter altura fixa */
+        width: 100%;
+        height: 80vw; /* fallback clássico */
+        
+        position: sticky; /* Opcional: Gruda no topo ao rolar */
+        top: 0;
+        z-index: 100; /* Fica acima da lista ao rolar */
+    }
+
+    .sidebar {
+        flex: 1; /* Ocupa o resto da tela */
+        border-left: none;
+        border-top: 1px solid #333;
+        overflow-y: visible; /* Deixa o scroll ser da página ou do container pai */
+        height: auto;
+    }
+
+    /* Ajustes nos controles para mobile */
+    .btn-icon { font-size: 20px; } /* Ícones um pouco menores */
+    .volume-container { display: none; } /* Esconde volume no mobile (físico do celular controla) */
+    .time-display { font-size: 11px; }
+    
+    .custom-controls { padding: 10px; }
+    .controls-row { gap: 10px; }
+    
+    /* Aumenta área de toque dos botões */
+    .btn-icon { padding: 10px; margin: -5px; } 
+    
+    /* Ajuste da sobreposição de próxima aula para caber no vídeo menor */
+    .next-title { font-size: 18px; margin-bottom: 15px; }
+    .btn-play-next, .btn-cancel { padding: 8px 16px; font-size: 12px; }
+}
+
+/* === FORÇAR REMOÇÃO DE CONTROLES NATIVOS === */
+.video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    
+    /* Remove sombra de foco */
+    &:focus {
+        outline: none;
+    }
+
+    /* Esconde controles nativos do Webkit (Chrome/Safari) */
+    &::-webkit-media-controls {
+        display: none !important;
+    }
+    &::-webkit-media-controls-enclosure {
+        display: none !important;
+    }
+    &::-webkit-media-controls-panel {
+        display: none !important;
+    }
+    &::-webkit-media-controls-play-button {
+        display: none !important;
+    }
+    &::-webkit-media-controls-start-playback-button {
+        display: none !important;
+    }
+}

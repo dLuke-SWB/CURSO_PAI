@@ -1,0 +1,315 @@
+/* =========================================
+   IMPORTS & VARIÁVEIS
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Hegarty&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+$primary-orange: #f79055;
+$primary-orange-dark: #d66e35;
+$text-light: rgb(230, 230, 230);
+$text-muted: rgba(255, 255, 255, 0.7);
+$success-green: #4caf50;
+$font-title: "Special Gothic Expanded One", sans-serif;
+$font-ui: 'Inter', sans-serif;
+
+@mixin dark-glass($opacity: 0.9) {
+    background: rgba(15, 15, 15, $opacity); 
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+}
+
+/* =========================================
+   ESTRUTURA BASE
+   ========================================= */
+.bg-view {
+    width: 100%; 
+    height: 100vh; 
+    overflow: hidden; /* Mantém a tela travada */
+    
+    background-image: var(--view-bg);
+    background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #080808;
+    position: relative; padding-top: 120px; padding-bottom: 50px; box-sizing: border-box; 
+
+    &::before {
+        content: ''; position: absolute; inset: 0; 
+        background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 100%); 
+        z-index: 1;
+    }
+
+    @media (max-width: 900px) {
+        background-position: top center; padding-top: 90px;
+        &::before { background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.95) 100%); }
+    }
+}
+
+.container-fluid { width: 100%; height: 100%; position: relative; z-index: 2; }
+
+/* =========================================
+   CARD DO CURSO
+   ========================================= */
+.example-card {
+    max-width: 550px; margin: 50px 0 5% 70px;
+    background-color: transparent; border: 0; box-shadow: none;
+    font-family: $font-title; color: white; text-align: start;
+    display: flex; flex-direction: column;
+
+    @media (max-width: 900px) {
+        margin: 0 auto; width: 90%; text-align: center; align-items: center;
+        max-height: calc(100vh - 120px); justify-content: flex-start;
+
+        &.mode-aulas {
+            /* No modo aulas, o card encolhe para dar espaço ao conteúdo */
+            min-height: auto !important; 
+            justify-content: flex-start; 
+            margin-bottom: 15px; 
+            
+            .curso-nome { font-size: 22px; margin-top: 5px; }
+            .curso-desc { display: none !important; } /* Esconde descrição para economizar espaço */
+        }
+    }
+
+    .curso-nome {
+        font-size: 44px; font-weight: 800; line-height: 1.1; text-transform: uppercase; letter-spacing: 1px;
+        text-shadow: 2px 2px 15px rgba(0,0,0,0.5);
+        @media (max-width: 900px) { font-size: 32px; margin-top: 20px; }
+    }
+
+    .curso-desc {
+        font-size: 18px; font-weight: 400; margin-bottom: 30px; color: $text-light; 
+        font-family: $font-ui; line-height: 1.5; max-width: 95%;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
+    }
+
+    /* === BOTÕES GERAIS === */
+    .action-group {
+        display: flex; flex-direction: column; gap: 12px; width: 100%;
+        padding: 0; margin: 0;
+        @media (max-width: 900px) { margin-top: auto; padding-bottom: 30px; }
+    }
+
+    button {
+        position: relative;
+        height: 54px;
+        width: 100%;
+        border-radius: 8px;
+        font-family: $font-ui;
+        padding: 0; 
+        cursor: pointer; 
+        transition: transform 0.2s ease-in-out;
+        outline: none !important; overflow: hidden; border: none;
+        background: transparent !important; 
+
+        &:hover:not(:disabled) { transform: translateY(-2px); }
+        &:active { transform: translateY(0px); }
+    }
+
+    /* WRAPPER DE CONTEÚDO */
+    .btn-content {
+        display: flex; flex-direction: row; align-items: center;
+        width: 100%; height: 100%;
+        padding: 0 20px; 
+        position: relative; z-index: 2; 
+        
+        &.centered { justify-content: center; }
+
+        i { font-size: 20px; width: 24px; display: flex; justify-content: center; margin-right: 12px; flex-shrink: 0; }
+        .btn-label { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+    }
+
+    /* 1. Botão Hero */
+    .btn-hero {
+        height: 58px; margin-bottom: 5px;
+        &.mode-play {
+            background: white !important; color: black;
+            box-shadow: 0 5px 20px rgba(255,255,255,0.15);
+            &:hover { background: #f0f0f0 !important; }
+        }
+        &.mode-buy {
+            background: linear-gradient(-45deg, #f79055, #ff5e00, #ff9f6b, #d66e35) !important;
+            background-size: 300% 300% !important;
+            animation: gradientMove 4s ease infinite;
+            color: white;
+            box-shadow: 0 5px 20px rgba($primary-orange, 0.4);
+            &:hover { box-shadow: 0 8px 30px rgba($primary-orange, 0.6); }
+        }
+        .btn-label { font-size: 16px; font-weight: 800; }
+    }
+
+    /* 2. Botões Secundários */
+    .btn-secondary-action {
+        background: #0a0a0a !important; 
+        border: 2px solid rgba(255, 255, 255, 0.15) !important; 
+        color: rgba(255, 255, 255, 0.9);
+        .brand-icon { color: $primary-orange; }
+
+        &:hover {
+            border-color: transparent !important;
+            background: 
+                linear-gradient(#0a0a0a, #0a0a0a) padding-box, 
+                radial-gradient(
+                    160px circle at var(--x) var(--y), 
+                    $primary-orange 0%, 
+                    transparent 80%
+                ) border-box !important;
+            
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+    }
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* =========================================
+   MODAIS E Paineis
+   ========================================= */
+.info-panel, .netflix-sessoes, .aulas-container, .progress-box {
+    @include dark-glass(0.95);
+    border-radius: 12px; color: white;
+}
+
+.info-panel {
+    margin-top: 15px; padding: 25px; width: 100%; 
+    max-height: 55vh; overflow-y: auto;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+    h2 { font-family: $font-ui; font-weight: 700; font-size: 22px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
+    
+    .custom-table {
+        --bs-table-bg: transparent; --bs-table-color: rgba(255,255,255,0.9);
+        td { padding: 12px 5px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); vertical-align: middle; font-family: $font-ui; }
+        tr:last-child td { border-bottom: none; }
+        .label-col { font-weight: 600; color: $text-muted; width: 130px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .value-col { font-size: 15px; font-weight: 500; }
+        .text-highlight { color: $primary-orange; font-weight: 800; font-size: 16px; }
+    }
+    .info-btn { width: auto !important; padding: 0 30px !important; display: inline-flex !important; margin-top: 15px; }
+}
+
+/* NETFLIX SESSIONS (ABAS SUPERIORES) */
+.netflix-sessoes {
+    margin-top: 10px; padding: 15px; animation: fadeIn 0.3s ease;
+    
+    .titulo-sessoes { font-size: 14px; font-family: $font-ui; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; color: $text-muted; }
+    
+    .sessoes-selector {
+        display: flex; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; 
+        
+        /* CORREÇÃO: Rolagem horizontal nas abas se tiver muitas */
+        overflow-x: auto; 
+        white-space: nowrap;
+        scrollbar-width: none; &::-webkit-scrollbar { display: none; }
+        
+        .sessao-item {
+            padding: 10px 5px; cursor: pointer; font-family: $font-ui; font-weight: 600; font-size: 14px; opacity: 0.5; transition: 0.3s; text-transform: uppercase;
+            &.ativa, &:hover { opacity: 1; }
+        }
+        .sessao-highlight { position: absolute; bottom: -1px; height: 2px; background: $primary-orange; width: 100px; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    }
+}
+
+/* ... (MANTENHA OS IMPORTS E OUTROS ESTILOS IGUAIS ATÉ A LINHA DO CONTAINER DE AULAS) ... */
+
+/* =======================================================
+   AULAS CONTAINER - LAYOUT FLEX PARA FIXAR O BOTÃO
+   ======================================================= */
+.aulas-container {
+    position: absolute; top: 50px; right: 60px; width: calc(100% - 650px); max-width: 1100px;
+    padding: 30px; animation: fadeIn 0.4s ease-out; z-index: 10;
+    
+    /* Configuração Desktop para manter comportamento padrão */
+    max-height: 85vh; 
+    display: flex; flex-direction: column; /* Transforma em coluna flexível */
+
+    @media (max-width: 900px) { 
+        position: relative; 
+        top: 0; right: 0; 
+        width: 95%; 
+        margin: 10px auto 0 auto; 
+        padding: 20px; 
+        
+        /* Altura fixa para permitir o scroll interno */
+        height: 60vh; 
+        max-height: 60vh;
+        
+        /* Removemos o overflow daqui e passamos para o grid */
+        overflow: hidden; 
+    }
+
+    .aulas-title { 
+        font-family: $font-ui; font-weight: 800; font-size: 20px; margin-bottom: 15px; 
+        flex-shrink: 0; /* Impede que o título encolha */
+    }
+
+    /* O botão agora fica fixo no final do container */
+    .voltar-aulas { 
+        width: auto; padding: 0 25px; margin-top: 15px; 
+        flex-shrink: 0; /* Impede que o botão encolha/suma */
+        
+        @media (max-width: 900px) { 
+            width: 100%; 
+            margin-bottom: 0; /* Remove margem extra inferior */
+        } 
+    }
+}
+
+.aulas-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;
+    
+    /* AQUI ESTÁ A MÁGICA: */
+    flex: 1; /* Ocupa todo o espaço disponível entre o título e o botão */
+    overflow-y: auto; /* Scroll acontece SÓ AQUI dentro */
+    min-height: 0; /* Fix para Firefox/Flexbox scrolling */
+    
+    padding-right: 5px; /* Espaço para a barra de rolagem não colar */
+    padding-bottom: 10px;
+
+    /* Estilo da barra de rolagem */
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+    @media (max-width: 600px) { 
+        grid-template-columns: 1fr; 
+    }
+}
+
+/* ... (RESTANTE DO ARQUIVO: .aula-card, .overlay, etc... PERMANECE IGUAL) ... */
+.aula-card {
+    background: rgba(30, 30, 30, 0.8); border-radius: 8px; overflow: hidden; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; border: 1px solid rgba(255,255,255,0.05);
+    &:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+    &.locked-card { cursor: default; opacity: 0.5; pointer-events: none; filter: grayscale(0.8); }
+    .video-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: black; .aula-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; } }
+    .aula-info { padding: 12px; font-family: $font-ui; }
+}
+
+.overlay-locked, .overlay-concluido { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 2; backdrop-filter: blur(2px); }
+.overlay-locked { background: rgba(0,0,0,0.6); i { font-size: 3rem; color: rgba(255,255,255,0.8); } }
+.overlay-concluido { background: rgba($success-green, 0.8); flex-direction: column; color: white; i { font-size: 32px; margin-bottom: 5px; } span { font-size: 12px; font-weight: 800; text-transform: uppercase; } }
+
+/* PROGRESSO */
+.mobile-backdrop { display: none; @media (max-width: 900px) { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; animation: fadeIn 0.3s ease; } }
+.progress-box { position: absolute; top: 50%; right: 10%; transform: translateY(-50%); width: 350px; height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; .close-icon { display: none; }
+    @media (max-width: 900px) { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) !important; width: 300px; height: 320px; z-index: 1000; .close-icon { display: flex; position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; background: rgba(255,255,255,0.1); border-radius: 50%; align-items: center; justify-content: center; color: white; font-size: 20px; } }
+    .progress-percent { font-family: $font-ui; font-size: 24px; margin-top: 20px; font-weight: 800; }
+}
+
+/* Animations */
+@keyframes fadeInDesktop { from { opacity: 0; transform: translateY(-40%); } to { opacity: 1; transform: translateY(-50%); } }
+@keyframes fadeInMobile { from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.progress-box.fadein { animation: fadeInDesktop 0.4s ease forwards; }
+@media (max-width: 900px) { .progress-box.fadein { animation: fadeInMobile 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes infoEnter { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes infoLeave { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(20px); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.fadeout { animation: fadeOut 0.3s ease forwards; }
+.info-in { animation: infoEnter 0.35s ease forwards; }
+.info-out { animation: infoLeave 0.35s ease forwards; }

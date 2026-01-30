@@ -1,0 +1,286 @@
+/* === VARIÁVEIS === */
+$orange: #f79055;
+$bg-color: #0f0f0f;
+$menu-bg: #1a1a1a; 
+$text-muted: rgba(255, 255, 255, 0.6);
+
+/* === LOGO SOFISTICADO (DISCRETO) === */
+.brand-logo {
+  font-size: 22px; 
+  text-transform: uppercase; 
+  font-weight: 800; /* Extra Bold para impacto */
+  letter-spacing: 0.5px; /* Espaçamento inicial normal */
+  text-decoration: none;
+  
+  color: white; /* Cor inicial limpa */
+  
+  /* Transição lenta e suave para dar sensação de peso/luxo */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    color: $orange; /* Muda para a cor da marca */
+    letter-spacing: 2px; /* As letras se afastam elegantemente */
+    text-shadow: 0px 0px 25px rgba(247, 144, 85, 0.6); /* Um brilho "glow" difuso */
+    cursor: pointer;
+  }
+}
+
+/* === CONTAINER PRINCIPAL === */
+.content {
+  width: 100%;
+  height: 60px;
+  background-color: $bg-color;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 9999;
+  display: flex; 
+  align-items: center;
+  justify-content: center; 
+  overflow-x: hidden; 
+  box-sizing: border-box;
+}
+
+.navbar {
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 15px;
+  position: relative !important;
+}
+
+/* === ESTILOS GERAIS DE BOTÕES (RESET) === */
+.btn-icon {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  color: white; 
+  font-size: 18px; 
+  display: flex; 
+  align-items: center;
+  cursor: pointer;
+  
+  &:focus, &:active {
+    outline: none;
+    box-shadow: none;
+    background: transparent !important;
+  }
+  
+  &:hover { color: $orange; }
+}
+
+/* === BARRA DE BUSCA EXPANDIDA (MOBILE) === */
+.mobile-search-bar {
+  display: flex; align-items: center;
+  height: 45px; 
+  background: #1a1a1a; 
+  border: 1px solid $orange; 
+  border-radius: 50px; 
+  padding: 0 15px;
+  position: absolute; 
+  left: 0; right: 0; 
+  margin: 0 auto; 
+  width: 80%; 
+  animation: slideInSearch 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+
+  .search-icon { color: $orange; font-size: 16px; margin-right: 10px; flex-shrink: 0; }
+  input {
+    flex: 1; background: transparent; border: none; color: white;
+    outline: none; font-size: 16px; width: 100%; height: 100%;
+    &::placeholder { color: rgba(255, 255, 255, 0.5); font-size: 14px; }
+  }
+  
+  button {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; 
+    background: rgba(255,255,255,0.1) !important; 
+    border-radius: 50%; margin-left: 10px;
+    i { font-size: 14px; }
+  }
+}
+
+@keyframes slideInSearch {
+  0% { opacity: 0; width: 40px; transform: translateX(50px); }
+  100% { opacity: 1; width: 80%; transform: translateX(0); }
+}
+
+/* === LISTA DE RESULTADOS (DROPDOWN MOBILE) === */
+.mobile-search-results {
+  position: fixed; top: 70px; left: 0; right: 0; margin: 0 auto;
+  width: 95%; max-height: 70vh; overflow-y: auto; z-index: 9995; 
+  display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px;
+
+  .result-card {
+    background-color: #121212; 
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 10px;
+    display: flex; align-items: center; gap: 15px;
+    
+    .card-thumb {
+      width: 60px; height: 80px; flex-shrink: 0;
+      border-radius: 8px; overflow: hidden;
+      img { width: 100%; height: 100%; object-fit: cover; }
+    }
+    .card-info {
+      display: flex; flex-direction: column; justify-content: center; flex: 1;
+      .card-title { color: white; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+      .card-desc { color: rgba(255,255,255,0.5); font-size: 12px; }
+    }
+  }
+}
+.mobile-search-results::-webkit-scrollbar { display: none; }
+
+/* === ESTRUTURA CENTRALIZADA (DESKTOP) === */
+@media (min-width: 992px) {
+  .container-fluid {
+    display: flex !important;
+    justify-content: center; 
+    align-items: center;
+    gap: 40px; 
+    width: auto;
+  }
+
+  .sidebar-menu {
+    display: flex !important;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .navbar-nav {
+    flex-direction: row !important;
+    gap: 20px;
+    margin: 0 !important;
+  }
+  
+  .mobile-menu-header { display: none !important; }
+}
+
+/* === LINKS E ESTADOS === */
+.nav-link {
+  color: white !important;
+  font-weight: 500; font-size: 16px; transition: 0.3s;
+  &:hover { color: $orange !important; }
+  &.active-link {
+    color: white !important; font-weight: 700;
+    &::after {
+      content: ''; display: block; width: 5px; height: 5px; 
+      background: $orange; border-radius: 50%; margin: 3px auto 0;
+    }
+  }
+}
+
+/* === BUSCA DESKTOP === */
+.search-bar {
+  position: relative; width: 280px;
+  i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); }
+  input {
+    width: 100%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px; padding: 8px 15px 8px 40px; color: white; outline: none;
+    &:focus { border-color: $orange; }
+  }
+}
+
+/* === BOTÕES E CONFIGURAÇÃO (DIREITA) === */
+.right-icons {
+  margin-left: 20px;
+  display: flex; align-items: center; gap: 20px;
+  
+  .btn-icon {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    color: white; font-size: 18px; display: flex; align-items: center;
+    &:hover { color: $orange; }
+  }
+
+  /* Animações */
+  .logout-btn:hover i { animation: exitBounce 0.6s ease infinite; }
+  .settings-btn:hover i { transform: rotate(180deg); transition: 0.5s; }
+}
+
+@keyframes wave-hand {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(15deg); }
+    75% { transform: rotate(-15deg); }
+}
+.bi-person-raised-hand { display: inline-block; transform-origin: bottom center; }
+.btn-icon:hover .bi-person-raised-hand { animation: wave-hand 1s infinite ease-in-out; }
+
+@keyframes exitBounce { 
+    0%, 100% { transform: translateX(0); } 
+    50% { transform: translateX(5px); } 
+}
+
+/* === SIDEBAR MOBILE (ESTRUTURA CORRIGIDA) === */
+@media (max-width: 991px) {
+  .sidebar-menu {
+    position: fixed; top: 0; left: 0; height: 100vh; width: 80vw;
+    background-color: $menu-bg; 
+    
+    display: flex; flex-direction: column;
+    padding: 20px 20px 0 20px; 
+    overflow: hidden; 
+    
+    transform: translateX(-100%); transition: 0.3s;
+    z-index: 10000;
+    
+    &.open { transform: translateX(0); }
+  }
+
+  .mobile-menu-header {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); 
+    padding-bottom: 15px; flex-shrink: 0;
+
+    button {
+        display: flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px;
+        background: rgba(255,255,255,0.1) !important; 
+        border-radius: 50%;
+        padding: 0;
+
+        i { font-size: 14px !important; }
+    }
+  }
+
+  .navbar-nav { 
+    flex-direction: column; gap: 15px; 
+    flex-grow: 1; 
+    overflow-y: auto; 
+    margin-bottom: 10px;
+    scrollbar-width: none; 
+    &::-webkit-scrollbar { display: none; }
+  }
+  
+  .nav-link.active-link::after { display: none; }
+  .nav-link.active-link { border-left: 3px solid $orange; padding-left: 10px !important; }
+
+  .right-icons {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0 !important;
+    flex-shrink: 0; 
+    margin-bottom: 20px;
+    
+    padding-top: 20px;
+    padding-bottom: 40px; 
+    border-top: 1px solid rgba(255,255,255,0.05);
+    
+    .btn-icon { width: 100%; justify-content: flex-start; font-size: 16px; }
+  }
+}
+
+/* BACKDROPS */
+.menu-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
+  opacity: 0; visibility: hidden; transition: 0.3s; z-index: 9998;
+  &.show { opacity: 1; visibility: visible; }
+}
+.search-backdrop {
+  position: fixed; top: 60px; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.85); z-index: 9990;
+}

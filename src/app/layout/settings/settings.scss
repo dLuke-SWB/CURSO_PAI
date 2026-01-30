@@ -1,0 +1,285 @@
+/* =========================================
+   VARIÁVEIS
+   ========================================= */
+$orange: #f79055;
+
+/* =========================================
+   ESTRUTURA GERAL DA PÁGINA
+   ========================================= */
+.bg-view {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-image: var(--view-bg);
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+}
+
+.scroll-container {
+    width: 100%;
+    height: 100%;
+    /* Espaço para o menu fixo no topo */
+    padding-top: 100px; 
+    /* Espaço extra embaixo para garantir scroll no mobile */
+    padding-bottom: 80px; 
+    
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+}
+
+.settings-wrapper {
+    max-width: 1100px;
+    padding: 0 20px; /* Margem de segurança nas laterais */
+}
+
+.page-title {
+    color: white;
+    font-weight: 800;
+    font-size: 32px;
+    margin-bottom: 30px;
+    
+    @media (max-width: 600px) {
+        font-size: 26px;
+        text-align: center; /* Centraliza no celular */
+        margin-bottom: 20px;
+    }
+}
+
+/* =========================================
+   PAINÉIS DE VIDRO (CARDS)
+   ========================================= */
+.glass-panel {
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px;
+    height: 100%; /* Garante alturas iguais no desktop */
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+    /* MOBILE: Reduz padding interno para ganhar espaço */
+    @media (max-width: 600px) {
+        padding: 20px;
+        height: auto; /* Altura automática no mobile */
+    }
+}
+
+.divider {
+    border-color: rgba(255,255,255,0.15);
+    margin: 25px 0;
+}
+
+/* =========================================
+   LADO ESQUERDO: PERFIL
+   ========================================= */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .avatar-circle {
+        width: 100px; height: 100px;
+        background: linear-gradient(135deg, $orange, #ff6b6b);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 36px; font-weight: bold; color: white;
+        margin-bottom: 15px;
+        border: 4px solid rgba(255,255,255,0.1);
+    }
+
+    h2 { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+    .user-role { color: $orange; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+}
+
+.info-list {
+    .info-item {
+        display: flex; justify-content: space-between;
+        margin-bottom: 12px; font-size: 14px;
+        .label { color: rgba(255,255,255,0.6); }
+        .value { font-weight: 600; }
+    }
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 25px;
+
+    .stat-box {
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px;
+        padding: 10px 5px;
+        text-align: center;
+        
+        .num { display: block; font-size: 20px; font-weight: 800; color: white; }
+        .txt { display: block; font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+        
+        /* Ajuste de fonte para telas muito pequenas */
+        @media (max-width: 600px) {
+            .num { font-size: 18px; }
+            .txt { font-size: 10px; }
+        }
+    }
+}
+
+/* =========================================
+   LADO DIREITO: EDIÇÃO
+   ========================================= */
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    display: flex; align-items: center;
+    color: white;
+    
+    @media (max-width: 600px) {
+        font-size: 18px;
+        justify-content: center; /* Centraliza no mobile */
+    }
+}
+
+/* Inputs Customizados */
+.form-group label, .row label {
+    font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 8px; display: block;
+}
+
+.custom-input {
+    background-color: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 8px;
+    width: 100%; /* Garante largura total */
+
+    &:focus {
+        background-color: rgba(0,0,0,0.5); border-color: $orange;
+        box-shadow: 0 0 0 3px rgba($orange, 0.2); color: white;
+        outline: none;
+    }
+}
+
+.input-wrapper {
+    position: relative;
+    i {
+        position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+        cursor: pointer; color: rgba(255,255,255,0.5);
+        &:hover { color: white; }
+    }
+}
+
+.btn-orange {
+    background-color: $orange; color: white; border: none;
+    padding: 10px 25px; border-radius: 6px; font-weight: 700; transition: 0.2s;
+    &:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    
+    /* Botão Full Width no Mobile para facilitar o toque */
+    @media (max-width: 600px) {
+        width: 100%; 
+        margin-top: 10px;
+    }
+}
+
+/* =========================================
+   GOOGLE BOX
+   ========================================= */
+.google-box {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.03);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+
+    .g-info {
+        display: flex; align-items: center; gap: 15px;
+        .icon-g {
+            width: 40px; height: 40px; background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #DB4437; font-size: 20px;
+        }
+        .status {
+            display: block; font-size: 12px; color: rgba(255,255,255,0.5);
+            &.linked { color: #4caf50; }
+        }
+    }
+}
+
+/* =========================================
+   MODAL DE CONFIRMAÇÃO
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 10000; /* Z-Index alto para ficar acima de tudo */
+    display: flex; justify-content: center; align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-glass {
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    .modal-icon {
+        font-size: 40px; color: $orange; margin-bottom: 20px;
+    }
+
+    h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+    
+    p { 
+        font-size: 14px; color: rgba(255,255,255,0.7); 
+        margin-bottom: 25px; line-height: 1.5;
+    }
+}
+
+.code-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white; font-size: 24px; text-align: center; letter-spacing: 5px;
+    padding: 15px; border-radius: 8px; margin-bottom: 30px;
+    outline: none; transition: 0.3s;
+
+    &:focus {
+        border-color: $orange;
+        box-shadow: 0 0 0 4px rgba($orange, 0.1);
+    }
+}
+
+.modal-actions {
+    display: flex; gap: 15px;
+
+    button {
+        flex: 1; padding: 12px; border-radius: 6px;
+        font-weight: 600; cursor: pointer; border: none; transition: 0.2s;
+    }
+
+    .btn-cancel {
+        background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white;
+        &:hover { background: rgba(255,255,255,0.1); }
+    }
+
+    .btn-confirm {
+        background: $orange; color: white;
+        &:hover { transform: scale(1.03); }
+        &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    }
+}
+
+/* =========================================
+   ANIMAÇÕES
+   ========================================= */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(50px) scale(0.9); } to { transform: translateY(0) scale(1); } }

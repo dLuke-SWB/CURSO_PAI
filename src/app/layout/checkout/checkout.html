@@ -1,0 +1,133 @@
+<div class="checkout-wrapper">
+    <div class="content-container">
+        
+        <div class="header">
+            <div class="logo-area">
+                <i class="bi bi-camera2"></i>
+                <span class="typewriter">{{ logoText }}</span>
+            </div>
+            <button class="btn-close" (click)="voltar()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="main-grid">
+            <div class="left-panel">
+                
+                <h1 class="page-title">Finalizar Compra</h1>
+                
+                <div class="order-summary">
+                    <div class="summary-header">
+                        <span>Seu Pedido</span>
+                        <span class="badge">Curso Online</span>
+                    </div>
+                    
+                    <div class="item-details">
+                        <div class="item-info">
+                            <h3>{{ curso?.nome || 'Curso de Fotografia' }}</h3>
+                            <p>Acesso vitalício + Certificado + Suporte</p>
+                        </div>
+                        <div class="item-price">
+                            R$ {{ curso?.preco || '97,00' }}
+                        </div>
+                    </div>
+
+                    <div class="total-row">
+                        <span>Total a pagar</span>
+                        <span class="total-price">R$ {{ curso?.preco || '97,00' }}</span>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+                    <h3>Método de Pagamento</h3>
+                    
+                    <div class="method-card selected">
+                        <div class="method-icon">
+                            <i class="bi bi-x-diamond-fill"></i>
+                        </div>
+                        <div class="method-info">
+                            <span class="name">PIX</span>
+                            <span class="desc">Liberação imediata do acesso</span>
+                        </div>
+                        <div class="check-icon">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+
+                    <div class="method-card disabled">
+                        <div class="method-icon"><i class="bi bi-credit-card"></i></div>
+                        <div class="method-info">
+                            <span class="name">Cartão de Crédito</span>
+                            <span class="desc">Em breve</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-pay" (click)="gerarPix()" [disabled]="loading">
+                    <span *ngIf="loading"><i class="bi bi-arrow-repeat spin"></i> Gerando QR Code...</span>
+                    <span *ngIf="!loading">Pagar Agora</span>
+                </button>
+            </div>
+
+            <div class="right-panel">
+                <div class="pix-card">
+                    <div class="card-header">
+                        <i class="bi bi-qr-code-scan"></i>
+                        <span>Pagamento via PIX</span>
+                    </div>
+
+                    <div class="pix-placeholder" *ngIf="!qrCodeBase64">
+                        <div class="icon-placeholder">
+                            <i class="bi bi-phone-vibrate"></i>
+                        </div>
+                        <p>Clique em "Pagar Agora" para gerar seu QR Code exclusivo e seguro.</p>
+                        <div class="security-badge">
+                            <i class="bi bi-shield-lock-fill"></i> Ambiente Seguro SSL
+                        </div>
+                    </div>
+
+                    <div class="qr-content" *ngIf="qrCodeBase64">
+                        
+                        <div class="qr-wrapper" [class.blurred]="pixExpirado">
+                            <img [src]="qrCodeBase64" alt="QR Code PIX">
+                            
+                            <div class="expired-overlay" *ngIf="pixExpirado">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Expirado</span>
+                            </div>
+                        </div>
+                        
+                        <div class="copy-paste">
+                            <label>Pix Copia e Cola</label>
+                            <div class="input-group">
+                                <input type="text" [value]="pixCode" readonly #pixInput [disabled]="pixExpirado">
+                                <button (click)="copiarPix(pixInput)" [disabled]="pixExpirado">
+                                    <i class="bi bi-files"></i> Copiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="timer" [class.expired-text]="pixExpirado">
+                            <i class="bi" [class.bi-stopwatch]="!pixExpirado" [class.bi-exclamation-triangle-fill]="pixExpirado"></i> 
+                            <span>
+                                {{ pixExpirado ? 'Código expirado. Gere um novo.' : 'Expira em ' + timerDisplay }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="custom-toast" [class.show]="toastVisible">
+        <div class="toast-content">
+            <i class="bi bi-check-circle-fill"></i>
+            <div class="text-group">
+                <span class="title">Copiado!</span>
+                <span class="msg">Código PIX transferido.</span>
+            </div>
+        </div>
+    </div>
+
+</div>

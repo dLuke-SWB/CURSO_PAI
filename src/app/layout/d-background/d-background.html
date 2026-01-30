@@ -1,0 +1,53 @@
+<div class="bg-wrapper">
+
+  <div class="bg-fade" 
+       [style.backgroundImage]="'url(' + cursoAtual?.bg + ')'">
+  </div>
+
+  <div class="content-wrapper">
+
+    <mat-card class="example-card">
+        <span class="curso-nome">{{ cursoAtual?.nome || 'Selecione um curso' }}</span>
+        <span class="curso-desc">{{ cursoAtual?.descricao }}</span>
+
+      <mat-card-actions class="action-group">
+        
+        <button matButton class="btn-hero" 
+                [class.mode-buy]="!usuarioTemCurso"
+                [class.mode-play]="usuarioTemCurso"
+                (click)="acaoPrincipal()">
+          
+          <div class="btn-content centered">
+              <i class="bi" 
+                 [class.bi-play-fill]="usuarioTemCurso"
+                 [class.bi-cart-plus-fill]="!usuarioTemCurso">
+              </i>
+              
+              <span class="btn-label">
+                  <ng-container *ngIf="usuarioTemCurso">CONTINUAR</ng-container>
+                  <ng-container *ngIf="!usuarioTemCurso">
+                      COMPRAR POR R$ {{ cursoAtual?.valor | number:'1.2-2' }}
+                  </ng-container>
+              </span>
+          </div>
+        </button>
+
+        <button matButton class="btn-secondary-action" 
+                (mousemove)="onMouseMove($event)" 
+                (click)="irParaView(true)">
+          
+          <div class="btn-content centered">
+              <i class="bi bi-info-circle-fill brand-icon"></i>
+              <span class="btn-label text-white">MAIS DETALHES</span>
+          </div>
+        </button>
+
+      </mat-card-actions>
+
+    </mat-card>
+
+    <app-d-rows (navegarParaCurso)="acaoPrincipal()"></app-d-rows>
+
+  </div>
+
+</div>

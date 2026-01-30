@@ -1,0 +1,186 @@
+/* =========================================
+   VARIÁVEIS
+   ========================================= */
+$primary-orange: #f79055;
+$bg-dark: #000;
+
+/* =========================================
+   LAYOUT GERAL DA PÁGINA
+   ========================================= */
+.page-bg {
+    width: 100%;
+    min-height: 100vh;
+    background-color: $bg-dark;
+    /* Espaço para o Navbar fixo não cobrir o conteúdo */
+    padding-top: 100px; 
+    padding-bottom: 40px;
+    box-sizing: border-box;
+}
+
+.content-area {
+    max-width: 900px; /* Largura máxima confortável para leitura */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* =========================================
+   WRAPPER DA TABELA (VIDRO FOSCO)
+   ========================================= */
+.table-wrapper {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden; 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cursos-table {
+    width: 100%;
+    background: transparent;
+}
+
+/* TÍTULO DO CABEÇALHO */
+.header-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-family: sans-serif;
+    
+    @media (max-width: 600px) {
+        font-size: 18px;
+        padding: 15px;
+    }
+}
+
+/* =========================================
+   LINHAS E CÉLULAS
+   ========================================= */
+.curso-row-container {
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.curso-box {
+    display: flex;
+    /* Alinha no topo porque a imagem é alta (vertical) */
+    align-items: flex-start; 
+    gap: 25px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: 600px) {
+        gap: 15px;
+        padding: 15px;
+        /* No mobile também alinha no topo */
+        align-items: flex-start; 
+    }
+}
+
+/* === IMAGEM TIPO PÔSTER (VERTICAL) === */
+.thumb {
+    /* DESKTOP: 100x150 (Proporção 2:3) */
+    width: 100px; 
+    height: 150px; 
+    
+    border-radius: 6px;
+    object-fit: cover; /* Preenche sem esticar */
+    flex-shrink: 0; /* Não deixa o flexbox esmagar a imagem */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+
+    /* MOBILE: Mini Pôster */
+    @media (max-width: 600px) {
+        width: 70px;
+        height: 105px;
+    }
+}
+
+/* =========================================
+   TEXTOS E INFORMAÇÕES
+   ========================================= */
+.curso-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+    /* Pequeno ajuste para alinhar visualmente com o topo da imagem */
+    padding-top: 5px; 
+}
+
+.curso-nome {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 6px;
+    line-height: 1.2;
+
+    @media (max-width: 600px) {
+        font-size: 16px;
+    }
+}
+
+.curso-desc {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 12px;
+    
+    /* Trunca texto longo */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Mostra até 3 linhas no PC */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    
+    @media (max-width: 600px) {
+        font-size: 13px;
+        -webkit-line-clamp: 2; /* Mostra até 2 linhas no Mobile */
+        margin-bottom: 8px;
+    }
+}
+
+.curso-progresso {
+    font-size: 14px;
+    font-weight: 600;
+    color: $primary-orange;
+    display: flex;
+    align-items: center;
+    margin-top: auto; /* Empurra para baixo se sobrar espaço */
+
+    @media (max-width: 600px) {
+        font-size: 12px;
+    }
+}
+
+/* ÍCONE DE SETA (DIREITA) */
+.arrow-icon {
+    align-self: center; /* Centraliza a seta na vertical */
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 24px;
+    
+    @media (max-width: 600px) {
+        display: none; /* Esconde no mobile para dar espaço ao texto */
+    }
+}
+
+/* =========================================
+   OVERRIDES DO ANGULAR MATERIAL
+   ========================================= */
+::ng-deep .mat-mdc-table {
+    background: transparent !important;
+}
+::ng-deep .mat-mdc-header-cell {
+    background: transparent !important;
+}
+::ng-deep .mat-mdc-cell {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}

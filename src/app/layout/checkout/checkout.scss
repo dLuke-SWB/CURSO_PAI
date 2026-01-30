@@ -1,0 +1,423 @@
+/* =========================================
+   1. VARIÁVEIS & CONFIGURAÇÕES GERAIS
+   ========================================= */
+$bg-dark: #0f0f0f;       
+$bg-card: #1a1a1a;       
+$primary: #f79055;       
+$text-muted: rgba(255, 255, 255, 0.6);
+$border: rgba(255, 255, 255, 0.1);
+$success: #4caf50;       
+$danger: #ff5555;        
+
+.checkout-wrapper {
+    min-height: 100vh;
+    background-color: $bg-dark;
+    color: white;
+    display: flex;
+    justify-content: center;
+    /* Alinhamento padrão desktop */
+    align-items: center; 
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+
+    /* CORREÇÃO MOBILE: Remove alinhamento central vertical */
+    @media (max-width: 900px) {
+        align-items: flex-start; /* Garante que o topo não seja cortado */
+        padding-top: 80px; /* Espaço extra para não colar no topo/notch */
+        height: auto; /* Permite crescer se necessário */
+    }
+}
+
+.content-container {
+    width: 100%;
+    max-width: 1100px;
+}
+
+/* =========================================
+   2. CABEÇALHO (HEADER)
+   ========================================= */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+
+    /* Ajuste Mobile */
+    @media (max-width: 600px) {
+        margin-bottom: 25px; /* Menos espaço no mobile */
+    }
+
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: $primary;
+        font-weight: 700;
+        font-size: 22px;
+
+        i { font-size: 26px; }
+
+        /* Ajuste fonte logo mobile */
+        @media (max-width: 600px) { font-size: 18px; i { font-size: 22px; } }
+
+        .typewriter {
+            border-right: 3px solid $primary; 
+            padding-right: 5px;
+            animation: blinkCursor 0.8s step-end infinite;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+
+    .btn-close {
+        background: transparent;
+        border: 1px solid $border;
+        color: white;
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: 0.3s;
+        font-size: 18px;
+
+        &:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+            transform: rotate(90deg);
+        }
+    }
+}
+
+@keyframes blinkCursor {
+    0%, 100% { border-color: $primary; }
+    50% { border-color: transparent; }
+}
+
+/* =========================================
+   3. GRID PRINCIPAL (LAYOUT)
+   ========================================= */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr; 
+    gap: 60px;
+    align-items: start;
+
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr; 
+        gap: 30px;
+    }
+}
+
+/* =========================================
+   4. PAINEL ESQUERDO (RESUMO & PAGAMENTO)
+   ========================================= */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    
+    @media (max-width: 600px) { gap: 20px; }
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+    
+    @media (max-width: 600px) { font-size: 24px; }
+}
+
+/* --- Card de Resumo do Pedido --- */
+.order-summary {
+    background: $bg-card;
+    border: 1px solid $border;
+    border-radius: 16px;
+    padding: 25px;
+
+    @media (max-width: 600px) { padding: 20px; }
+
+    .summary-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 20px;
+        
+        span {
+            font-weight: 600; font-size: 13px; color: $text-muted;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        
+        .badge {
+            background: rgba(247, 144, 85, 0.15);
+            color: $primary;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px; font-weight: 700;
+        }
+    }
+
+    .item-details {
+        display: flex; justify-content: space-between; align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid $border;
+        margin-bottom: 20px;
+
+        /* Ajuste Mobile para itens */
+        @media (max-width: 600px) {
+            flex-direction: column; 
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        h3 { font-size: 18px; margin: 0 0 5px 0; font-weight: 600; }
+        p { margin: 0; font-size: 13px; color: $text-muted; }
+        .item-price { font-size: 18px; font-weight: 600; }
+    }
+
+    .total-row {
+        display: flex; justify-content: space-between; align-items: center;
+        .total-price { font-size: 26px; font-weight: 800; color: $primary; }
+    }
+}
+
+/* --- Seleção de Métodos --- */
+.payment-methods {
+    h3 { font-size: 18px; margin-bottom: 15px; font-weight: 600; }
+    
+    .method-card {
+        display: flex; align-items: center; gap: 15px;
+        background: $bg-card;
+        border: 1px solid $border;
+        padding: 18px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-bottom: 12px;
+        position: relative; overflow: hidden;
+
+        &.selected {
+            border-color: $primary;
+            background: rgba(247, 144, 85, 0.08);
+            .method-icon { color: $primary; }
+            .check-icon { opacity: 1; transform: scale(1); }
+        }
+
+        &.disabled {
+            opacity: 0.5; cursor: not-allowed; filter: grayscale(1);
+            &:hover { border-color: $border; }
+        }
+
+        .method-icon {
+            font-size: 24px; color: $text-muted; width: 40px; display: flex; justify-content: center;
+        }
+
+        .method-info {
+            flex: 1; display: flex; flex-direction: column;
+            .name { font-weight: 700; font-size: 15px; }
+            .desc { font-size: 12px; color: $text-muted; margin-top: 2px; }
+        }
+
+        .check-icon {
+            color: $primary; opacity: 0; transform: scale(0);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 20px;
+        }
+    }
+}
+
+/* --- Botão de Pagar --- */
+.btn-pay {
+    width: 100%; padding: 18px;
+    background: $primary; color: #000;
+    border: none; border-radius: 50px;
+    font-weight: 700; font-size: 16px;
+    cursor: pointer; transition: 0.3s;
+    margin-top: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+
+    /* Aumenta área de toque no mobile */
+    @media (max-width: 600px) { padding: 20px; font-size: 18px; margin-bottom: 40px; }
+
+    &:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(247, 144, 85, 0.2);
+    }
+    
+    &:active { transform: translateY(-1px); }
+    &:disabled { opacity: 0.7; cursor: wait; }
+}
+
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+
+/* =========================================
+   5. PAINEL DIREITO (VISUAL PIX)
+   ========================================= */
+.right-panel {
+    display: flex;
+    justify-content: center;
+}
+
+.pix-card {
+    width: 100%; max-width: 400px;
+    background: linear-gradient(145deg, #1f1f1f, #151515); 
+    border-radius: 20px;
+    padding: 35px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    min-height: 480px;
+    display: flex; flex-direction: column;
+
+    /* Ajuste mobile */
+    @media (max-width: 600px) { padding: 25px; min-height: auto; }
+
+    .card-header {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 14px; font-weight: 600; color: $text-muted;
+        margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid $border;
+        i { font-size: 18px; }
+    }
+}
+
+/* ... (O RESTANTE DO CÓDIGO - Placeholders, QR, Toasts - MANTÉM IGUAL) ... */
+.pix-placeholder {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; color: $text-muted; font-size: 14px; gap: 20px;
+    animation: fadeIn 0.5s ease;
+
+    .icon-placeholder {
+        width: 80px; height: 80px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 32px; color: rgba(255,255,255,0.3);
+        margin-bottom: 10px;
+    }
+
+    .security-badge {
+        display: flex; align-items: center; gap: 6px;
+        background: rgba(76, 175, 80, 0.1);
+        color: $success;
+        padding: 6px 14px; border-radius: 20px;
+        font-size: 12px; font-weight: 600;
+    }
+}
+
+.qr-content {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 25px;
+    animation: slideUp 0.5s ease;
+
+    .qr-wrapper {
+        background: white;
+        padding: 12px; border-radius: 12px;
+        position: relative; overflow: hidden;
+        transition: 0.3s;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+        img { width: 190px; height: 190px; display: block; }
+
+        &.blurred img {
+            filter: blur(6px) grayscale(100%);
+            opacity: 0.4;
+        }
+
+        .expired-overlay {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.1);
+            color: $danger; font-weight: 700;
+            animation: fadeIn 0.3s;
+            i { font-size: 40px; margin-bottom: 8px; }
+        }
+    }
+
+    .copy-paste {
+        width: 100%;
+        label {
+            display: block; font-size: 12px; color: $text-muted;
+            margin-bottom: 8px; font-weight: 600;
+        }
+        
+        .input-group {
+            display: flex; gap: 8px;
+            
+            input {
+                flex: 1; background: $bg-dark;
+                border: 1px solid $border;
+                color: white; padding: 12px; border-radius: 8px;
+                outline: none; font-size: 13px; font-family: monospace;
+                text-overflow: ellipsis;
+                &:disabled { opacity: 0.5; cursor: not-allowed; }
+            }
+            
+            button {
+                background: rgba(255,255,255,0.1);
+                color: white; border: none;
+                padding: 0 18px; border-radius: 8px;
+                cursor: pointer; font-size: 13px; font-weight: 600;
+                transition: 0.2s; white-space: nowrap;
+                display: flex; align-items: center; gap: 6px;
+                
+                &:hover:not(:disabled) { background: rgba(255,255,255,0.2); }
+                &:disabled { opacity: 0.5; cursor: not-allowed; }
+            }
+        }
+    }
+
+    .timer {
+        font-size: 14px; color: $primary; font-weight: 700; 
+        display: flex; align-items: center; gap: 8px;
+        background: rgba(247, 144, 85, 0.1);
+        padding: 8px 16px; border-radius: 20px;
+        transition: 0.3s;
+
+        &.expired-text {
+            color: $danger;
+            background: rgba(255, 85, 85, 0.1);
+        }
+    }
+}
+
+.custom-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px); 
+    
+    background: #222;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-left: 4px solid $success;
+    
+    padding: 14px 24px;
+    border-radius: 8px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    z-index: 1000;
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+    .toast-content {
+        display: flex; align-items: center; gap: 15px;
+        i { color: $success; font-size: 22px; }
+        
+        .text-group {
+            display: flex; flex-direction: column;
+            .title { color: white; font-weight: 700; font-size: 14px; }
+            .msg { color: rgba(255,255,255,0.7); font-size: 12px; }
+        }
+    }
+
+    &.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

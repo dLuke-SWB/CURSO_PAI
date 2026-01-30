@@ -1,0 +1,82 @@
+<div class="login-wrapper">
+
+    <div class="form-side">
+        <div class="form-content">
+            <div class="logo-area">
+                <i class="bi bi-camera2"></i>
+                <span class="typewriter">{{ logoText }}</span>
+            </div>
+
+            <h1>Bem-vindo de volta</h1>
+            <p class="subtitle">Insira seus dados para acessar sua conta.</p>
+
+            <div class="social-login">
+                <div class="google-btn-wrapper">
+                    <asl-google-signin-button 
+                        type="standard" 
+                        theme="outline" 
+                        size="large" 
+                        text="continue_with"
+                        shape="rectangular" 
+                        [width]="googleBtnWidth" 
+                        logo_alignment="left">
+                    </asl-google-signin-button>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <form>
+                <div class="custom-input">
+                    <label>E-mail</label>
+                    <input type="email" name="email" [(ngModel)]="email" placeholder="exemplo@email.com">
+                </div>
+
+                <div class="custom-input">
+                    <label>Senha</label>
+                    <div class="password-wrapper">
+                        <input [type]="showPassword ? 'text' : 'password'" name="senha" [(ngModel)]="senha"
+                            placeholder="••••••••">
+                        <button type="button" class="btn-eye" (click)="togglePassword()">
+                            <i class="bi" [class.bi-eye-fill]="showPassword" [class.bi-eye-slash-fill]="!showPassword">
+                            </i>
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="errorMessage" class="error-msg">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    {{ errorMessage }}
+                </div>
+
+                <div class="actions">
+                    <div class="check">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Lembrar de mim</label>
+                    </div>
+                    <a href="/recuperar-senha" class="forgot">Esqueceu a senha?</a>
+                </div>
+
+                <button class="btn-login" (click)="doLogin()">Entrar</button>
+            </form>
+
+            <p class="footer-text">
+                Não tem uma conta? <a href="/cadastrar">Cadastre-se</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="visual-side">
+        <div class="grid-container">
+            <div class="grid-item" *ngFor="let cell of gridCells">
+                <div class="image-wrapper" [class.visible]="cell.active">
+                    <img [src]="cell.image" alt="poster">
+                </div>
+            </div>
+        </div>
+        <div class="overlay-gradient"></div>
+    </div>
+
+</div>

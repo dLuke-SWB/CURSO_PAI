@@ -1,0 +1,179 @@
+<div class="bg-view">
+    <div class="container-fluid">
+        
+        <mat-card class="example-card" [class.mode-aulas]="showAulas">
+            <span class="curso-nome">{{ cursoAtual?.nome }}</span>
+            <span class="curso-desc">{{ cursoAtual?.descricao }}</span>
+
+            <mat-card-actions class="action-group" *ngIf="!showInfo && !showAulas">
+                
+                <button matButton class="btn-hero" 
+                        [class.mode-buy]="!usuarioTemCurso"
+                        [class.mode-play]="usuarioTemCurso"
+                        (click)="acaoPrincipal()">
+                    
+                    <div class="btn-content centered">
+                        <i class="bi" 
+                           [class.bi-play-fill]="usuarioTemCurso"
+                           [class.bi-cart-plus-fill]="!usuarioTemCurso">
+                        </i>
+                        
+                        <span class="btn-label">
+                            <ng-container *ngIf="usuarioTemCurso">CONTINUAR ASSISTINDO</ng-container>
+                            <ng-container *ngIf="!usuarioTemCurso">
+                                COMPRAR POR R$ {{ cursoAtual?.valor | number:'1.2-2' }}
+                            </ng-container>
+                        </span>
+                    </div>
+                </button>
+
+                <button matButton class="btn-secondary-action" 
+                        (mousemove)="onMouseMove($event)" 
+                        (click)="abrirAulas()">
+                
+                    <div class="btn-content">
+                        <i class="bi bi-collection-play-fill brand-icon"></i>
+                        <span class="btn-label">CONTEÚDO DO CURSO</span>
+                    </div>
+                </button>
+
+                <button matButton class="btn-secondary-action" 
+                        (mousemove)="onMouseMove($event)" 
+                        (click)="abrirInformacoes()">
+                     
+                    <div class="btn-content">
+                        <i class="bi bi-info-circle-fill brand-icon"></i>
+                        <span class="btn-label">INFORMAÇÕES E DETALHES</span>
+                    </div>
+                </button>
+
+                <button matButton class="btn-secondary-action" 
+                        (mousemove)="onMouseMove($event)" 
+                        (click)="abrirProgresso()">
+                     
+                    <div class="btn-content">
+                        <i class="bi bi-bar-chart-fill brand-icon"></i>
+                        <span class="btn-label">MEU PROGRESSO</span>
+                    </div>
+                </button>
+
+                <button matButton class="btn-secondary-action" 
+                        (mousemove)="onMouseMove($event)" 
+                        (click)="voltar()">
+                     
+                    <div class="btn-content">
+                        <i class="bi bi-arrow-left brand-icon"></i>
+                        <span class="btn-label">VOLTAR AO INÍCIO</span>
+                    </div>
+                </button>
+
+            </mat-card-actions>
+
+            <div class="info-panel" [ngClass]="infoAnim" *ngIf="showInfo">
+                <h2 class="mb-4">Informações do Curso</h2>
+
+                <div class="table-responsive">
+                    <table class="table custom-table">
+                        <tbody>
+                            <tr>
+                                <td class="label-col"><i class="bi bi-fonts me-2"></i>Título</td>
+                                <td class="value-col">{{ cursoAtual?.nome }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label-col"><i class="bi bi-card-text me-2"></i>Descrição</td>
+                                <td class="value-col">{{ cursoAtual?.descricao }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label-col"><i class="bi bi-currency-dollar me-2"></i>Valor</td>
+                                <td class="value-col text-highlight">R$ {{ cursoAtual?.valor | number:'1.2-2' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label-col"><i class="bi bi-collection-play me-2"></i>Aulas</td>
+                                <td class="value-col">{{ aulasTotal }} aulas</td>
+                            </tr>
+                            <tr>
+                                <td class="label-col"><i class="bi bi-clock me-2"></i>Duração</td>
+                                <td class="value-col">12 horas (Estimado)</td>
+                            </tr>
+                            <tr>
+                                <td class="label-col"><i class="bi bi-person-badge me-2"></i>Professor</td>
+                                <td class="value-col">Alexandre Bricio</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button matButton class="btn-secondary-action mt-3 info-btn" (mousemove)="onMouseMove($event)" (click)="fecharInformacoes()">
+                     
+                    <div class="btn-content centered">
+                        <i class="bi bi-arrow-left me-2"></i> VOLTAR
+                    </div>
+                </button>
+            </div>
+
+            <div class="netflix-sessoes" *ngIf="showAulas">
+                <h2 class="titulo-sessoes">Sessões do Curso</h2>
+                <div class="sessoes-selector">
+                    <div class="sessao-item" *ngFor="let s of cursoAtual?.sessoes"
+                        [class.ativa]="s.id === sessaoSelecionada" (click)="selecionarSessao(s.id)">
+                        {{ s.nome }}
+                    </div>
+
+                    <div class="sessao-highlight"
+                        [style.transform]="'translateX(' + ((sessaoSelecionada-1) * 160) + 'px)'">
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+
+        <div class="aulas-container" *ngIf="showAulas">
+            <h2 class="aulas-title">Conteúdo:  {{ getNomeSessaoAtual() }}</h2>
+
+            <div class="aulas-grid">
+                <div class="aula-card" 
+                     *ngFor="let aula of aulasDaSessao" 
+                     [class.locked-card]="!usuarioTemCurso">
+
+                    <div class="video-wrapper">
+                        <div class="overlay-concluido" *ngIf="usuarioTemCurso && checkConcluido(aula.id)">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Concluída</span>
+                        </div>
+                        <div class="overlay-locked" *ngIf="!usuarioTemCurso">
+                            <i class="bi bi-lock-fill"></i>
+                        </div>
+                        <video class="aula-video" preload="metadata">
+                            <source [src]="aula.video" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="aula-info" style="padding: 12px;">
+                        <span style="color: white; font-weight: bold;">Aula {{ aula.id }}</span>
+                        <br>
+                        <span style="color: #ccc; font-size: 14px;">{{ aula.titulo }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <button matButton class="btn-secondary-action voltar-aulas" (mousemove)="onMouseMove($event)" (click)="fecharAulas()">
+                <div class=""></div>
+                <div class="btn-content centered">
+                    <i class="bi bi-arrow-left me-2"></i> VOLTAR
+                </div>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="mobile-backdrop" *ngIf="showProgress" (click)="abrirProgresso()"></div>
+
+<div class="progress-box" [ngClass]="progressAnimation" *ngIf="showProgress">
+    <div class="close-icon" (click)="abrirProgresso()">
+        <i class="bi bi-x-lg"></i>
+    </div>
+    <app-circle-progress [aulasFeitas]="progressoAtual" [aulasTotal]="aulasTotal"></app-circle-progress>
+    <div class="progress-percent">
+        {{ ((progressoAtual / aulasTotal) * 100) | number:'1.0-0' }}% concluído
+    </div>
+</div>

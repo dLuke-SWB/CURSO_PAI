@@ -1,0 +1,257 @@
+/* =========================================
+   VARIÁVEIS GERAIS
+   ========================================= */
+$bg-dark: #0f0f0f;
+$bg-input: #1a1a1a;
+$border-color: #333;
+$primary-orange: #f79055;
+$text-muted: #888;
+
+/* =========================================
+   LAYOUT PRINCIPAL
+   ========================================= */
+.login-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    background-color: $bg-dark;
+    color: white;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+/* =========================================
+   LADO ESQUERDO (FORMULÁRIO)
+   ========================================= */
+.form-side {
+    flex: 1;
+    min-width: 450px;
+    max-width: 650px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: $bg-dark;
+    z-index: 5;
+    position: relative;
+    // box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+
+    /* MOBILE: Ajuste de padding para evitar cortes */
+    @media (max-width: 900px) {
+        min-width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        padding: 20px; /* Padding de segurança */
+    }
+}
+
+.form-content {
+    width: 100%;
+    max-width: 400px;
+    
+    @media (max-width: 420px) {
+        max-width: 100%;
+    }
+}
+
+/* --- LOGO --- */
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: $primary-orange;
+
+    i { font-size: 28px; }
+
+    .typewriter {
+        border-right: 3px solid $primary-orange;
+        padding-right: 5px;
+        animation: blinkCursor 0.8s step-end infinite;
+        white-space: nowrap;
+    }
+}
+
+@keyframes blinkCursor {
+    0%, 100% { border-color: $primary-orange; }
+    50% { border-color: transparent; }
+}
+
+h1 {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px; color: #fff;
+    @media (max-width: 480px) { font-size: 26px; }
+}
+
+.subtitle { color: $text-muted; margin-bottom: 30px; font-size: 15px; }
+
+/* --- SOCIAL LOGIN --- */
+.social-login {
+    margin-bottom: 25px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .google-btn-wrapper {
+        display: block;
+        width: 100%;
+        /* Centraliza o botão */
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.divider {
+    display: flex; align-items: center; justify-content: center;
+    margin: 20px 0 30px; position: relative;
+
+    &::before {
+        content: ''; position: absolute; left: 0; right: 0; top: 50%;
+        height: 1px; background: #222; z-index: 1;
+    }
+    span {
+        background: $bg-dark; padding: 0 15px;
+        color: #555; font-size: 13px; z-index: 2; text-transform: uppercase;
+    }
+}
+
+/* =========================================
+   INPUTS
+   ========================================= */
+.custom-input {
+    margin-bottom: 20px; position: relative;
+
+    label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #ccc; }
+    .password-wrapper { position: relative; width: 100%; }
+
+    input {
+        width: 100%; height: 50px;
+        background-color: $bg-input; border: 1px solid $border-color;
+        border-radius: 8px !important; padding: 0 15px;
+        color: white; font-size: 15px; outline: none;
+        -webkit-appearance: none; appearance: none;
+        transition: all 0.2s ease-in-out;
+
+        &:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus {
+            -webkit-text-fill-color: white;
+            -webkit-box-shadow: 0 0 0px 1000px $bg-input inset;
+            transition: background-color 5000s ease-in-out 0s;
+            border-radius: 8px !important;
+        }
+        &::placeholder { color: #555; }
+        &:focus { border-color: $primary-orange; box-shadow: 0 0 0 4px rgba(247, 144, 85, 0.15); }
+    }
+
+    input[type="password"], input[name="senha"] { padding-right: 45px; }
+
+    .btn-eye {
+        position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+        background: transparent; border: none; color: #666; cursor: pointer;
+        font-size: 18px; transition: 0.2s; padding: 5px; z-index: 10;
+        &:hover { color: $primary-orange; }
+    }
+}
+
+.error-msg {
+    color: $primary-orange; background: rgba(247, 144, 85, 0.1);
+    border: 1px solid rgba(247, 144, 85, 0.2); border-radius: 6px;
+    padding: 10px; font-size: 14px; margin-bottom: 20px;
+}
+
+/* =========================================
+   AÇÕES (CHECKBOX E ESQUECI SENHA)
+   ========================================= */
+.actions {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    font-size: 14px; margin-bottom: 30px; color: $text-muted;
+    flex-wrap: wrap; /* Permite quebrar linha se necessário */
+    gap: 15px;
+
+    /* CORREÇÃO DO CORTE NO MOBILE */
+    @media (max-width: 380px) {
+        flex-direction: column; /* Empilha um em cima do outro em telas minusculas */
+        align-items: flex-start;
+    }
+
+    .forgot { color: #ccc; text-decoration: none; &:hover { color: $primary-orange; } }
+}
+
+.check {
+    display: flex; align-items: center; cursor: pointer;
+    
+    input[type="checkbox"] { display: none; }
+    
+    label {
+        position: relative; 
+        padding-left: 28px; /* Espaço pro quadrado */
+        cursor: pointer; color: #ccc;
+        font-weight: 500; user-select: none;
+        white-space: nowrap; /* Evita quebra de linha no meio da frase */
+        
+        &:hover { color: white; }
+        
+        /* Quadrado */
+        &::before {
+            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            width: 18px; height: 18px; background: $bg-input; border: 1px solid #444; border-radius: 4px;
+        }
+        /* Vzinho */
+        &::after {
+            content: ''; position: absolute; left: 6px; top: 48%; transform: translateY(-60%) rotate(45deg);
+            width: 5px; height: 10px; border: solid #000; border-width: 0 2px 2px 0; opacity: 0;
+        }
+    }
+    
+    input:checked + label {
+        &::before { background: $primary-orange; border-color: $primary-orange; }
+        &::after { opacity: 1; }
+    }
+}
+
+.btn-login {
+    width: 100%; height: 50px; background: $primary-orange; color: #000;
+    font-weight: 700; border: none; border-radius: 8px; cursor: pointer;
+    font-size: 16px; transition: all 0.2s;
+    &:hover { transform: translateY(-2px); background: lighten($primary-orange, 5%); }
+}
+
+.footer-text {
+    margin-top: 25px; text-align: center; font-size: 14px; color: #666;
+    a { color: white; font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; color: $primary-orange; } }
+}
+
+/* =========================================
+   LADO DIREITO (VISUAL)
+   ========================================= */
+.visual-side {
+    flex: 1.5; position: relative; background: #000;
+    overflow: hidden; display: flex; justify-content: center; align-items: center;
+    position: relative;
+
+    /* Some no Mobile */
+    @media (max-width: 900px) { display: none; }
+}
+
+.grid-container {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+    width: 120%; transform: rotate(-5deg) scale(1.1);
+}
+
+.grid-item {
+    aspect-ratio: 9/16; border-radius: 12px; overflow: hidden;
+    position: relative; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+.image-wrapper {
+    width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out;
+    &.visible { opacity: 1; }
+    img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.overlay-gradient {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to right, $bg-dark 0%, transparent 40%); pointer-events: none;
+}

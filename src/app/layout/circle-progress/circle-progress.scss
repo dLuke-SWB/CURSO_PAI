@@ -1,0 +1,35 @@
+.circle-wrapper {
+  width: 140px;
+  height: 140px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto; /* Garante centralização se estiver num container flex */
+}
+
+.circle {
+  transform: rotate(-90deg);
+}
+
+circle {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+circle.bg {
+  stroke: rgba(255, 255, 255, 0.2); /* Melhor contraste */
+}
+
+circle.progress {
+  stroke: #33ad0e; // Verde/Laranja conforme tema
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.center-text {
+  position: absolute;
+  font-size: 22px;
+  font-weight: 600;
+  color: rgb(255, 255, 255);
+}

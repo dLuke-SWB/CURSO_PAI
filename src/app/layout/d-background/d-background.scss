@@ -1,0 +1,207 @@
+/* =========================================
+   IMPORTS & VARIÁVEIS
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Hegarty&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+$primary-orange: #f79055;
+$primary-orange-dark: #d66e35;
+$text-light: rgb(230, 230, 230);
+$text-muted: rgba(255, 255, 255, 0.7);
+$font-title: "Special Gothic Expanded One", sans-serif;
+$font-ui: 'Inter', sans-serif;
+
+/* === CONTAINER GERAL === */
+.bg-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #080808;
+}
+
+.bg-fade {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+    
+    /* Overlay escuro para leitura */
+    &::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 100%);
+    }
+    
+    @media (max-width: 768px) {
+        background-position: center top; /* Foca no topo da imagem no mobile */
+        /* Overlay mais forte embaixo no mobile para o texto aparecer bem */
+        &::after { background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 60%, #000 100%); }
+    }
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px; 
+}
+
+/* === BLOCO DE TÍTULO === */
+.example-card {
+    max-width: 700px; 
+    margin-left: 60px;
+    margin-top: 5vh; 
+    
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    
+    text-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /* === AJUSTES MOBILE === */
+    @media (max-width: 768px) {
+        width: 90%; 
+        margin: 0 auto; /* Centraliza */
+        padding: 0 10px;
+        margin-top: auto; /* Empurra para baixo */
+        margin-bottom: 30px; /* Espaço do rodapé */
+        align-items: center; 
+        text-align: center;
+    }
+
+    .curso-nome {
+        font-family: $font-title; color: white;
+        font-size: 2.8rem; line-height: 1.1; text-transform: uppercase;
+        text-shadow: 2px 2px 20px rgba(0,0,0,0.6);
+        
+        /* --- CORREÇÃO DO TAMANHO DA FONTE NO MOBILE --- */
+        @media (max-width: 768px) { 
+            font-size: 2rem; /* Reduzido drásticamente de 2.5rem para caber palavras longas */
+            line-height: 1.2;
+            margin-bottom: 5px;
+            letter-spacing: 1px; /* Melhora a leitura */
+
+            margin-top: 20px;
+        }
+        
+        /* Para telas muito pequenas (iPhone SE, etc) */
+        @media (max-width: 380px) {
+            font-size: 1.6rem;
+        }
+    }
+
+    .curso-desc {
+        font-family: $font-ui; color: $text-light;
+        font-size: 1.2rem; margin-top: 10px; margin-bottom: 30px; font-weight: 400;
+        text-shadow: 1px 1px 10px rgba(0,0,0,0.8);
+        
+        @media (max-width: 768px) { 
+            font-size: 1rem; 
+            margin-bottom: 25px; 
+            max-width: 90%; /* Garante que não bata nas bordas */
+        }
+    }
+}
+
+/* === BOTÕES (ESTILO UNIFICADO COM VIEW) === */
+.action-group {
+    margin-top: 20px; margin-left: 0;
+    display: flex; gap: 15px; width: 100%; 
+
+    @media (max-width: 768px) {
+        flex-direction: column; width: 100%; gap: 12px;
+    }
+}
+
+button {
+    position: relative;
+    height: 56px;
+    flex: 1; /* Divide espaço igualmente */
+    border-radius: 8px;
+    font-family: $font-ui;
+    padding: 0;
+    cursor: pointer; transition: transform 0.2s ease-in-out;
+    outline: none !important; overflow: hidden; border: none;
+    background: transparent !important;
+
+    @media (max-width: 768px) { width: 100%; flex: none; height: 50px; /* Botões um pouco menores no mobile */ }
+
+    &:hover:not(:disabled) { transform: translateY(-2px); }
+    &:active { transform: translateY(0px); }
+}
+
+/* Wrapper de Conteúdo */
+.btn-content {
+    display: flex; flex-direction: row; align-items: center;
+    width: 100%; height: 100%;
+    padding: 0 20px; 
+    position: relative; z-index: 2;
+    
+    &.centered { justify-content: center; }
+
+    i { font-size: 22px; width: 26px; display: flex; justify-content: center; margin-right: 10px; flex-shrink: 0; }
+    .btn-label { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+}
+
+/* 1. Botão Hero (Comprar/Começar) */
+.btn-hero {
+    &.mode-play {
+        background: white !important; color: black;
+        box-shadow: 0 5px 20px rgba(255,255,255,0.15);
+        &:hover { background: #f0f0f0 !important; }
+    }
+
+    &.mode-buy {
+        background: linear-gradient(-45deg, #f79055, #ff5e00, #ff9f6b, #d66e35) !important;
+        background-size: 300% 300% !important;
+        animation: gradientMove 4s ease infinite;
+        color: white;
+        box-shadow: 0 5px 20px rgba($primary-orange, 0.4);
+        &:hover { box-shadow: 0 8px 30px rgba($primary-orange, 0.6); }
+    }
+}
+
+/* 2. Botão Secundário (Detalhes com Spotlight na Borda) */
+.btn-secondary-action {
+    background: #0a0a0a !important; 
+    border: 2px solid rgba(255, 255, 255, 0.15) !important; 
+    color: rgba(255, 255, 255, 0.9);
+    
+    .brand-icon { color: $primary-orange; }
+
+    &:hover {
+        border-color: transparent !important;
+        /* Truque do Background Clip para Borda Luminosa */
+        background: 
+            linear-gradient(#0a0a0a, #0a0a0a) padding-box, 
+            radial-gradient(
+                160px circle at var(--x) var(--y), 
+                $primary-orange 0%, 
+                transparent 80%
+            ) border-box !important;
+        
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+}
+
+/* Animação do Gradiente */
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Grid no Rodapé */
+app-d-rows {
+    margin-top: auto; width: 100%; display: block;
+    @media (max-width: 768px) { padding-bottom: 20px; }
+}

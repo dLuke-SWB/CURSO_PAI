@@ -1,0 +1,101 @@
+<div class="login-wrapper">
+
+    <div class="form-side">
+        <div class="form-content">
+            <div class="logo-area">
+                <i class="bi bi-camera2"></i>
+                <span class="typewriter">{{ logoText }}</span>
+            </div>
+
+            <h1>Crie sua conta</h1>
+            <p class="subtitle">Comece sua jornada cinematográfica hoje.</p>
+
+            <div class="social-login">
+                <div class="google-btn-wrapper">
+                    <asl-google-signin-button 
+                        type="standard" 
+                        theme="outline" 
+                        size="large" 
+                        text="continue_with"
+                        shape="rectangular" 
+                        [width]="googleBtnWidth" 
+                        logo_alignment="left">
+                    </asl-google-signin-button>
+                </div>
+            </div>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <form>
+                <div class="custom-input">
+                    <label>Nome Completo</label>
+                    <input type="text" name="nome" [(ngModel)]="nome" placeholder="Seu nome">
+                </div>
+
+                <div class="custom-input">
+                    <label>E-mail</label>
+                    <input type="email" name="email" [(ngModel)]="email" placeholder="exemplo@email.com">
+                </div>
+
+                <div class="custom-input">
+                    <label>Senha</label>
+                    <div class="password-wrapper">
+                        <input [type]="showPassword ? 'text' : 'password'" name="senha" [(ngModel)]="senha"
+                            placeholder="••••••••">
+
+                        <button type="button" class="btn-eye" (click)="togglePassword()">
+                            <i class="bi" [class.bi-eye-fill]="showPassword" [class.bi-eye-slash-fill]="!showPassword">
+                            </i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="custom-input">
+                    <label>Confirmar Senha</label>
+                    <div class="password-wrapper">
+                        <input [type]="showConfirmPassword ? 'text' : 'password'" name="confirmSenha"
+                            [(ngModel)]="confirmSenha" placeholder="••••••••">
+
+                        <button type="button" class="btn-eye" (click)="toggleConfirmPassword()">
+                            <i class="bi" [class.bi-eye-fill]="showConfirmPassword"
+                                [class.bi-eye-slash-fill]="!showConfirmPassword">
+                            </i>
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="errorMessage" style="color: #f79055; margin-bottom: 15px; font-size: 14px;">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    {{ errorMessage }}
+                </div>
+
+                <div class="actions">
+                    <div class="check">
+                        <input type="checkbox" id="terms">
+                        <label for="terms">Li e aceito os Termos de Uso</label>
+                    </div>
+                </div>
+
+                <button class="btn-login" (click)="doRegister()">Cadastrar</button>
+            </form>
+
+            <p class="footer-text">
+                Já tem uma conta? <a href="javascript:void(0)" (click)="goToLogin()">Faça Login</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="visual-side">
+        <div class="grid-container">
+            <div class="grid-item" *ngFor="let cell of gridCells">
+                <div class="image-wrapper" [class.visible]="cell.active">
+                    <img [src]="cell.image" alt="poster">
+                </div>
+            </div>
+        </div>
+        <div class="overlay-gradient"></div>
+    </div>
+
+</div>

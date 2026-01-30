@@ -1,0 +1,49 @@
+<div class="bg-view">
+    <div class="container-fluid scroll-container">
+        <div class="container help-wrapper">
+            
+            <div class="header-section">
+                <i class="bi bi-person-raised-hand big-icon"></i>
+                <h1>Central de Ajuda</h1>
+                <p>Tire suas dúvidas ou fale conosco.</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    
+                    <div class="faq-list">
+                        <div class="faq-item" *ngFor="let item of faqs; let i = index" 
+                             [class.active]="item.isOpen" 
+                             (click)="toggleFaq(i)">
+                            
+                            <div class="faq-question">
+                                <span>{{ item.question }}</span>
+                                <i class="bi bi-chevron-down" [class.rotate]="item.isOpen"></i>
+                            </div>
+
+                            <div class="faq-answer" [class.show]="item.isOpen">
+                                <div class="inner-answer">
+                                    <p>{{ item.answer }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="whatsapp-section">
+                        <p class="mb-3 opacity-75">Ainda precisa de ajuda?</p>
+                        
+                        <a href="https://wa.me/5511999999999?text=Ola,%20preciso%20de%20ajuda%20na%20plataforma." 
+                           target="_blank" 
+                           class="btn-whatsapp">
+                            <i class="bi bi-whatsapp"></i>
+                            <span>Entrar no grupo de Whatsapp</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
