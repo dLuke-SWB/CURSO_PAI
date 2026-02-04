@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 import { BackgroundService } from '../background.service';
 import { CursoInfo, AulaInfo, SessaoInfo } from '../../data/cursos';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProgressoService } from '../progresso.service';
-// import { AuthService } from '../../auth.service';
+import shaka from 'shaka-player/dist/shaka-player.compiled';
 
 interface SessaoExpandida extends SessaoInfo {
     expanded: boolean;
@@ -15,18 +15,23 @@ interface SessaoExpandida extends SessaoInfo {
     styleUrls: ['./player.scss'],
     standalone: false
 })
-export class Player implements OnInit, OnDestroy {
+export class Player implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('videoRef') videoRef!: ElementRef<HTMLVideoElement>;
+    player: any;
+
+    // Estados de Controle
+    isWindowHidden = false;
+    securityError = false;
+    userIdentifier = 'Usuario Anônimo';
 
     // Dados
     curso!: CursoInfo;
     userId: number = 0;
-    
     aulaSelecionada: AulaInfo | null = null;
     sessoesView: SessaoExpandida[] = [];
 
-    // Estados do Player
+    // Playback
     isPlaying = false;
     isMuted = false;
     currentTime = 0;
@@ -34,37 +39,31 @@ export class Player implements OnInit, OnDestroy {
     showControls = false;
     playbackRate = 1.0;
     isFullscreen = false;
-
-    // Volume
     volume = 1;
-    lastVolume = 1;
 
-    // Menus e Animações
+    // UI
     showSpeedMenu = false;
     showForwardAnim = false;
     showBackwardAnim = false;
-    
-    // Timeouts para limpeza
-    animTimeout: any;
-    controlsTimeout: any;
-    autoPlayTimeout: any;
-
-    // Próxima Aula
     showNextOverlay = false;
     nextLesson: AulaInfo | null = null;
+    
+    animTimeout: any;
+    controlsTimeout: any;
 
     constructor(
         private bg: BackgroundService, 
         private router: Router,
         private route: ActivatedRoute, 
-        private progressoService: ProgressoService,
-        // private authService: AuthService
+        private progressoService: ProgressoService
     ) { }
 
     ngOnInit(): void {
         const rawUser = localStorage.getItem('usuario');
         if (rawUser) {
-            this.userId = JSON.parse(rawUser).id;
+            const user = JSON.parse(rawUser);
+            this.userId = user.id;
+            this.userIdentifier = user.email || user.cpf || `ID: ${user.id}`;
             this.progressoService.carregarProgresso(this.userId).subscribe({
                 error: (err) => console.error('Erro ao carregar progresso:', err)
             });
@@ -72,100 +71,121 @@ export class Player implements OnInit, OnDestroy {
 
         this.bg.cursoSelecionado$.subscribe((curso: any) => {
             if (!curso) return;
-
-            // if (!this.authService.temCurso(curso.id)) { ... }
-
             this.curso = curso;
-
             if (curso.sessoes) {
                 this.sessoesView = curso.sessoes.map((s: SessaoInfo) => ({ ...s, expanded: false }));
-
                 const aulaIdParam = this.route.snapshot.queryParams['aulaId'];
-                let aulaEncontrada = false;
-
-                if (aulaIdParam) {
-                    const idBusca = Number(aulaIdParam);
-                    for (const sessao of this.sessoesView) {
-                        const aula = sessao.aulas.find(a => a.id === idBusca);
-                        if (aula) {
-                            this.selecionarAula(aula);
-                            sessao.expanded = true;
-                            aulaEncontrada = true;
-                            break;
+                
+                setTimeout(() => {
+                    if (aulaIdParam) {
+                        const id = Number(aulaIdParam);
+                        for (const s of this.sessoesView) {
+                            const a = s.aulas.find(x => x.id === id);
+                            if (a) {
+                                this.selecionarAula(a);
+                                s.expanded = true;
+                                break;
+                            }
                         }
-                    }
-                }
-
-                if (!aulaEncontrada && this.sessoesView.length > 0) {
-                    this.sessoesView[0].expanded = true;
-                    if (this.sessoesView[0].aulas.length > 0) {
+                    } else if (this.sessoesView.length > 0 && this.sessoesView[0].aulas.length > 0) {
+                        this.sessoesView[0].expanded = true;
                         this.selecionarAula(this.sessoesView[0].aulas[0]);
                     }
-                }
+                }, 100);
             }
         });
+    }
+
+    ngAfterViewInit() {
+        this.initShakaPlayer();
     }
 
     ngOnDestroy(): void {
-        if (this.animTimeout) clearTimeout(this.animTimeout);
-        if (this.controlsTimeout) clearTimeout(this.controlsTimeout);
-        if (this.autoPlayTimeout) clearTimeout(this.autoPlayTimeout);
+        if (this.player) this.player.destroy();
+        clearTimeout(this.animTimeout);
+        clearTimeout(this.controlsTimeout);
     }
 
-    // =========================================================
-    // 1. CONTROLES GERAIS E TECLADO
-    // =========================================================
-    @HostListener('window:keydown', ['$event'])
-    handleKeyboardEvent(event: KeyboardEvent) {
-        if ((event.target as HTMLElement).tagName === 'INPUT') return;
-
-        switch (event.key) {
-            case 'ArrowRight': this.skip(5); event.preventDefault(); break;
-            case 'ArrowLeft': this.skip(-5); event.preventDefault(); break;
-            case ' ': case 'k': this.togglePlay(); event.preventDefault(); break;
-            case 'f': this.toggleFullscreen(); break;
-            case 'm': this.toggleMute(); break;
-        }
-    }
-
-    toggleControlsMobile() {
-        if (window.innerWidth < 992) {
-            this.showControls = !this.showControls;
-            if (this.controlsTimeout) clearTimeout(this.controlsTimeout);
-            
-            if (this.showControls && this.isPlaying) {
-                this.controlsTimeout = setTimeout(() => {
-                    this.showControls = false;
-                }, 3000);
+    // === BLACKOUT (PERDA DE FOCO) ===
+    // Correção: Removido ['$event'] pois a função não aceita argumentos
+    @HostListener('window:blur')
+    @HostListener('document:visibilitychange')
+    onLossOfFocus() {
+        if (document.hidden || !document.hasFocus()) {
+            this.isWindowHidden = true;
+            if (this.videoRef && this.videoRef.nativeElement) {
+                this.videoRef.nativeElement.pause();
+                this.isPlaying = false;
             }
         }
     }
 
-    // =========================================================
-    // 2. PLAYBACK E SELEÇÃO
-    // =========================================================
-    selecionarAula(aula: AulaInfo) {
+    // Correção: Removido ['$event'] pois a função não aceita argumentos
+    @HostListener('window:focus')
+    onGainFocus() {
+        this.isWindowHidden = false;
+    }
+
+    // === SHAKA PLAYER ===
+    initShakaPlayer() {
+        if (!this.videoRef || !this.videoRef.nativeElement) return;
+        if (this.player) return;
+
+        shaka.polyfill.installAll();
+
+        if (shaka.Player.isBrowserSupported()) {
+            const videoElement = this.videoRef.nativeElement;
+            this.player = new shaka.Player(videoElement);
+
+            this.player.configure({
+                drm: {
+                    clearKeys: {
+                        'd06f95e26372074e53ca0733d9d30560': '100b6c20940f779a4589152b57d2dacb'
+                    }
+                }
+            });
+
+            this.player.addEventListener('error', (event: any) => {
+                console.error('Shaka Error:', event);
+                if (event.detail && event.detail.code >= 6000) {
+                     this.securityError = true;
+                }
+            });
+        } else {
+            console.error('Browser not supported!');
+            this.securityError = true;
+        }
+    }
+
+    async selecionarAula(aula: AulaInfo) {
         this.showNextOverlay = false;
         this.aulaSelecionada = aula;
-        this.isPlaying = true;
+        this.securityError = false;
 
-        setTimeout(() => {
-            if (this.videoRef && this.videoRef.nativeElement) {
-                const video = this.videoRef.nativeElement;
-                video.load();
-                video.playbackRate = this.playbackRate;
-                
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => { this.isPlaying = false; });
-                }
-            }
-        });
+        if (!this.player) this.initShakaPlayer();
+        
+        if (!this.player) {
+            setTimeout(() => this.selecionarAula(aula), 500);
+            return;
+        }
+
+        try {
+            await this.player.load(aula.video); 
+            const video = this.videoRef.nativeElement;
+            video.playbackRate = this.playbackRate;
+            video.play().then(() => {
+                this.isPlaying = true;
+            }).catch(() => {
+                this.isPlaying = false;
+            });
+        } catch (e: any) {
+            console.error('Erro Load:', e);
+        }
     }
 
-    togglePlay(event?: Event) {
-        if (event) event.stopPropagation();
-
+    // === CONTROLES ===
+    
+    togglePlay() {
         const video = this.videoRef.nativeElement;
         if (video.paused) {
             video.play();
@@ -174,119 +194,39 @@ export class Player implements OnInit, OnDestroy {
         } else {
             video.pause();
             this.isPlaying = false;
-            this.showControls = true; 
+            this.showControls = true;
         }
     }
 
-    // =========================================================
-    // 3. FULLSCREEN (CORRIGIDO PARA MOBILE/IOS)
-    // =========================================================
     toggleFullscreen() {
         const container = document.querySelector('.video-area') as any;
         const video = this.videoRef.nativeElement as any;
-
-        // Verifica se já está em fullscreen (suporta prefixos Webkit/Moz)
-        const isFull = document.fullscreenElement || 
-                       (document as any).webkitFullscreenElement || 
-                       (document as any).mozFullScreenElement ||
-                       (document as any).msFullscreenElement ||
-                       video.webkitDisplayingFullscreen; // Específico iOS
-
+        const isFull = document.fullscreenElement || (document as any).webkitFullscreenElement; 
         if (!isFull) {
-            // --- ENTRAR ---
-            if (container.requestFullscreen) {
-                // Padrão Desktop/Android moderno: Expande a DIV com controles
-                container.requestFullscreen().catch((err: any) => {
-                    console.error("Erro ao entrar em fullscreen:", err);
-                    // Fallback se falhar no container (alguns Androids antigos)
-                    if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
-                });
-            } 
-            else if (video.webkitEnterFullscreen) {
-                // Padrão iOS (iPhone): Expande apenas o VÍDEO (Nativo)
-                video.webkitEnterFullscreen();
-            }
-            else if (container.webkitRequestFullscreen) {
-                // Chrome/Safari antigos
-                container.webkitRequestFullscreen();
-            } 
-            else if (container.mozRequestFullScreen) {
-                // Firefox antigo
-                container.mozRequestFullScreen();
-            }
+            if (container.requestFullscreen) container.requestFullscreen();
+            else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
         } else {
-            // --- SAIR ---
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if ((document as any).webkitExitFullscreen) {
-                (document as any).webkitExitFullscreen();
-            } else if ((document as any).mozCancelFullScreen) {
-                (document as any).mozCancelFullScreen();
-            } else if (video.webkitExitFullscreen) {
-                video.webkitExitFullscreen();
-            }
+            if (document.exitFullscreen) document.exitFullscreen();
         }
     }
 
     @HostListener('document:fullscreenchange')
-    @HostListener('document:webkitfullscreenchange')
-    @HostListener('document:mozfullscreenchange')
-    @HostListener('document:MSFullscreenChange')
-    screenChange() { 
-        this.isFullscreen = !!(document.fullscreenElement || 
-                             (document as any).webkitFullscreenElement || 
-                             (document as any).mozFullScreenElement);
-    }
+    screenChange() { this.isFullscreen = !!document.fullscreenElement; }
 
-    // =========================================================
-    // 4. EVENTOS E PROGRESSO
-    // =========================================================
-    onMetadataLoaded() {
-        this.duration = this.videoRef.nativeElement.duration;
-        this.videoRef.nativeElement.volume = this.volume;
-    }
-
-    updateProgress() {
-        this.currentTime = this.videoRef.nativeElement.currentTime;
-    }
-
-    onVideoEnded() {
-        this.isPlaying = false;
-        this.showControls = true;
-
-        if (this.curso && this.aulaSelecionada && this.userId) {
-            this.progressoService.marcarConcluido(
-                this.userId, this.curso.id, this.aulaSelecionada.id
-            ).subscribe({
-                error: (err) => console.error('Erro ao salvar:', err)
-            });
+    skip(seconds: number) { 
+        const video = this.videoRef.nativeElement;
+        video.currentTime += seconds;
+        this.currentTime = video.currentTime;
+        
+        if (this.animTimeout) clearTimeout(this.animTimeout);
+        if (seconds > 0) { 
+            this.showForwardAnim = true; this.showBackwardAnim = false; 
+        } else { 
+            this.showBackwardAnim = true; this.showForwardAnim = false; 
         }
-        this.checkNextLesson();
-    }
-
-    checkNextLesson() {
-        if (!this.curso || !this.aulaSelecionada) return;
-        let foundCurrent = false;
-        this.nextLesson = null;
-
-        for (const sessao of this.curso.sessoes) {
-            for (const aula of sessao.aulas) {
-                if (foundCurrent) {
-                    this.nextLesson = aula;
-                    this.showNextOverlay = true;
-                    return;
-                }
-                if (aula.id === this.aulaSelecionada.id) foundCurrent = true;
-            }
-        }
-    }
-
-    goToNextLesson() {
-        if (this.nextLesson) this.selecionarAula(this.nextLesson);
-    }
-
-    cancelNext() {
-        this.showNextOverlay = false;
+        this.animTimeout = setTimeout(() => { 
+            this.showForwardAnim = false; this.showBackwardAnim = false; 
+        }, 600);
     }
 
     seek(event: any) {
@@ -295,30 +235,6 @@ export class Player implements OnInit, OnDestroy {
         this.currentTime = value;
     }
 
-    skip(seconds: number) {
-        const video = this.videoRef.nativeElement;
-        video.currentTime += seconds;
-        this.currentTime = video.currentTime;
-
-        if (this.animTimeout) clearTimeout(this.animTimeout);
-        if (seconds > 0) {
-            this.showForwardAnim = true; this.showBackwardAnim = false;
-        } else {
-            this.showBackwardAnim = true; this.showForwardAnim = false;
-        }
-        this.animTimeout = setTimeout(() => {
-            this.showForwardAnim = false; this.showBackwardAnim = false;
-        }, 600);
-    }
-
-    getGradient() {
-        const percent = (this.currentTime / this.duration) * 100 || 0;
-        return `linear-gradient(to right, #f79055 ${percent}%, #444 ${percent}%)`;
-    }
-
-    // =========================================================
-    // 5. VOLUME E VELOCIDADE
-    // =========================================================
     setVolume(event: any) {
         this.volume = parseFloat(event.target.value);
         if (this.videoRef?.nativeElement) this.videoRef.nativeElement.volume = this.volume;
@@ -327,53 +243,88 @@ export class Player implements OnInit, OnDestroy {
 
     toggleMute() {
         if (this.volume > 0) {
-            this.lastVolume = this.volume;
             this.volume = 0;
             this.isMuted = true;
         } else {
-            this.volume = this.lastVolume || 1;
+            this.volume = 1;
             this.isMuted = false;
         }
         this.videoRef.nativeElement.volume = this.volume;
     }
-
-    getVolumeIcon(): string {
-        if (this.volume === 0 || this.isMuted) return 'bi-volume-mute-fill';
-        if (this.volume < 0.5) return 'bi-volume-down-fill';
-        return 'bi-volume-up-fill';
+    
+    // UI Helpers
+    onMetadataLoaded() {
+        this.duration = this.videoRef.nativeElement.duration;
+        this.videoRef.nativeElement.volume = this.volume;
+    }
+    updateProgress() { this.currentTime = this.videoRef.nativeElement.currentTime; }
+    
+    onVideoEnded() {
+        this.isPlaying = false;
+        this.showControls = true;
+        if(this.userId && this.curso && this.aulaSelecionada) {
+            this.progressoService.marcarConcluido(this.userId, this.curso.id, this.aulaSelecionada.id).subscribe();
+        }
+        this.checkNextLesson();
     }
 
-    getVolumeGradient() {
-        const percent = this.volume * 100;
-        return `linear-gradient(to right, white ${percent}%, rgba(255,255,255,0.2) ${percent}%)`;
+    checkNextLesson() {
+        if (!this.curso || !this.aulaSelecionada) return;
+        let found = false;
+        for (const s of this.curso.sessoes) {
+            for (const a of s.aulas) {
+                if (found) { this.nextLesson = a; this.showNextOverlay = true; return; }
+                if (a.id === this.aulaSelecionada.id) found = true;
+            }
+        }
     }
 
+    goToNextLesson() { if (this.nextLesson) this.selecionarAula(this.nextLesson); }
+    cancelNext() { this.showNextOverlay = false; }
+    
     toggleSpeedMenu() { this.showSpeedMenu = !this.showSpeedMenu; }
-
-    setSpeed(speed: number) {
-        this.playbackRate = speed;
-        this.videoRef.nativeElement.playbackRate = this.playbackRate;
-        this.showSpeedMenu = false;
+    setSpeed(s: number) { 
+        this.playbackRate = s; 
+        this.videoRef.nativeElement.playbackRate = s; 
+        this.showSpeedMenu = false; 
     }
-
-    getSpeedLabel(): string { return this.playbackRate === 1 ? 'Normal' : `${this.playbackRate}x`; }
-
-    // =========================================================
-    // 6. UTILITÁRIOS
-    // =========================================================
-    checkConcluido(aulaId: number): boolean {
-        if (!this.curso) return false;
-        return this.progressoService.isConcluido(this.curso.id, aulaId);
+    
+    getGradient() { return `linear-gradient(to right, #f79055 ${(this.currentTime/this.duration)*100}%, #444 0%)`; }
+    getVolumeGradient() { return `linear-gradient(to right, white ${this.volume*100}%, rgba(255,255,255,0.2) 0%)`; }
+    getVolumeIcon() { return this.volume === 0 ? 'bi-volume-mute-fill' : 'bi-volume-up-fill'; }
+    getSpeedLabel() { return this.playbackRate + 'x'; }
+    
+    formatTime(s: number) { 
+        if(!s) return '00:00';
+        const m=Math.floor(s/60), sec=Math.floor(s%60);
+        return `${m<10?'0':''}${m}:${sec<10?'0':''}${sec}`; 
     }
-
-    formatTime(seconds: number): string {
-        if (!seconds || isNaN(seconds)) return '00:00';
-        const m = Math.floor(seconds / 60);
-        const s = Math.floor(seconds % 60);
-        return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    checkConcluido(id: number) { 
+        if(!this.curso) return false;
+        return this.progressoService.isConcluido(this.curso.id, id); 
     }
-
+    
     voltar() {
-        this.router.navigate(['/view'], { queryParams: { id: this.curso.id } });
+        if(this.curso) this.router.navigate(['/curso'], { queryParams: { id: this.curso.id } });
+        else this.router.navigate(['/']);
     }
+
+    // Teclado
+    @HostListener('window:keydown', ['$event'])
+    handleKeyboardEvent(event: KeyboardEvent) {
+        if ((event.target as HTMLElement).tagName === 'INPUT') return;
+        switch (event.key) {
+            case 'ArrowRight': this.skip(5); event.preventDefault(); break;
+            case 'ArrowLeft': this.skip(-5); event.preventDefault(); break;
+            case ' ': 
+            case 'k': 
+                event.preventDefault(); 
+                this.togglePlay(); 
+                break;
+            case 'f': this.toggleFullscreen(); break;
+            case 'm': this.toggleMute(); break;
+        }
+    }
+    
+    preventRightClick(event: MouseEvent) { event.preventDefault(); return false; }
 }
