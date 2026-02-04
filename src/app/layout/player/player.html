@@ -1,6 +1,18 @@
 <div class="player-container">
 
-    <div class="video-area" (mouseenter)="showControls = true" (mouseleave)="showControls = false">
+    <div class="video-area" 
+         (mouseenter)="showControls = true" 
+         (mouseleave)="showControls = false"
+         (contextmenu)="preventRightClick($event)">
+
+        <div class="security-blackout" *ngIf="isWindowHidden">
+            <div class="blackout-content">
+                <i class="bi bi-eye-slash-fill"></i>
+                <h3>Conteúdo Protegido</h3>
+                <p>O vídeo é pausado automaticamente quando a janela perde o foco.</p>
+                <small>Volte para esta aba para continuar assistindo.</small>
+            </div>
+        </div>
 
         <video #videoRef 
             class="video-player" 
@@ -12,98 +24,65 @@
             playsinline 
             webkit-playsinline 
             x5-playsinline
-        >
+            controlsList="nodownload"
+            disablePictureInPicture>
         </video>
 
-        <div class="skip-feedback left" [class.active]="showBackwardAnim">
-            <div class="feedback-content">
-                <i class="bi bi-caret-left-fill"></i>
-                <i class="bi bi-caret-left-fill"></i>
-                <i class="bi bi-caret-left-fill"></i>
-                <span>-5s</span>
-            </div>
-        </div>
-
-        <div class="skip-feedback right" [class.active]="showForwardAnim">
-            <div class="feedback-content">
-                <i class="bi bi-caret-right-fill"></i>
-                <i class="bi bi-caret-right-fill"></i>
-                <i class="bi bi-caret-right-fill"></i>
-                <span>+5s</span>
-            </div>
-        </div>
-        <div class="next-lesson-overlay" *ngIf="showNextOverlay">
-            <div class="next-content">
-                <span class="next-label">A seguir</span>
-                <h2 class="next-title">{{ nextLesson?.titulo }}</h2>
-
-                <div class="next-actions">
-                    <button class="btn-play-next" (click)="goToNextLesson()">
-                        <i class="bi bi-play-fill"></i> Reproduzir agora
-                    </button>
-
-                    <button class="btn-cancel" (click)="cancelNext()">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
         <div class="custom-controls" [class.visible]="showControls || !isPlaying">
-
             <div class="progress-container">
-                <input type="range" min="0" [max]="duration" [(ngModel)]="currentTime" (input)="seek($event)"
-                    class="progress-bar" [style.background]="getGradient()">
+                <input type="range" min="0" [max]="duration" [(ngModel)]="currentTime" (input)="seek($event)" class="progress-bar" [style.background]="getGradient()">
             </div>
 
             <div class="controls-row">
                 <div class="left-controls">
-
-                    <button class="btn-icon" (click)="skip(-5)">
-                        <i class="bi bi-arrow-counterclockwise"></i>
-                    </button>
-
-                    <button class="btn-icon" (click)="togglePlay()">
-                        <i class="bi" [class.bi-play-fill]="!isPlaying" [class.bi-pause-fill]="isPlaying"></i>
-                    </button>
-
-                    <button class="btn-icon" (click)="skip(5)">
-                        <i class="bi bi-arrow-clockwise"></i>
-                    </button>
-
+                    <button class="btn-icon" (click)="skip(-5)"><i class="bi bi-arrow-counterclockwise"></i></button>
+                    
+                    <button class="btn-icon" (click)="togglePlay()"><i class="bi" [class.bi-play-fill]="!isPlaying" [class.bi-pause-fill]="isPlaying"></i></button>
+                    
+                    <button class="btn-icon" (click)="skip(5)"><i class="bi bi-arrow-clockwise"></i></button>
+                    
                     <div class="volume-container">
-                        <button class="btn-icon" (click)="toggleMute()">
-                            <i class="bi" [ngClass]="getVolumeIcon()"></i>
-                        </button>
-
+                        <button class="btn-icon" (click)="toggleMute()"><i class="bi" [ngClass]="getVolumeIcon()"></i></button>
                         <div class="volume-slider-wrapper">
-                            <input type="range" min="0" max="1" step="0.01" [value]="volume" (input)="setVolume($event)"
-                                class="volume-slider" [style.background]="getVolumeGradient()">
+                            <input type="range" min="0" max="1" step="0.01" [value]="volume" (input)="setVolume($event)" class="volume-slider" [style.background]="getVolumeGradient()">
                         </div>
                     </div>
-
-                    <span class="time-display">
-                        {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
-                    </span>
+                    <span class="time-display">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
                 </div>
 
                 <div class="right-controls">
                     <div class="speed-wrapper">
+                        <button class="btn-icon text-btn" (click)="toggleSpeedMenu()">{{ getSpeedLabel() }}</button>
                         <div class="speed-menu" *ngIf="showSpeedMenu">
                             <button (click)="setSpeed(0.75)" [class.active]="playbackRate === 0.75">0.75x</button>
                             <button (click)="setSpeed(1)" [class.active]="playbackRate === 1">Normal</button>
                             <button (click)="setSpeed(1.5)" [class.active]="playbackRate === 1.5">1.5x</button>
                             <button (click)="setSpeed(2)" [class.active]="playbackRate === 2">2x</button>
                         </div>
-
-                        <button class="btn-icon text-btn" (click)="toggleSpeedMenu()">
-                            {{ getSpeedLabel() }}
-                        </button>
                     </div>
+                    <button class="btn-icon" (click)="toggleFullscreen()"><i class="bi" [class.bi-fullscreen]="!isFullscreen" [class.bi-fullscreen-exit]="isFullscreen"></i></button>
+                </div>
+            </div>
+        </div>
 
-                    <button class="btn-icon" (click)="toggleFullscreen()">
-                        <i class="bi" [class.bi-fullscreen]="!isFullscreen" [class.bi-fullscreen-exit]="isFullscreen">
-                        </i>
-                    </button>
+        <div class="skip-feedback left" [class.active]="showBackwardAnim">
+            <div class="feedback-content">
+                <i class="bi bi-caret-left-fill"></i><span>-5s</span>
+            </div>
+        </div>
+        <div class="skip-feedback right" [class.active]="showForwardAnim">
+            <div class="feedback-content">
+                <i class="bi bi-caret-right-fill"></i><span>+5s</span>
+            </div>
+        </div>
+
+        <div class="next-lesson-overlay" *ngIf="showNextOverlay">
+            <div class="next-content">
+                <span class="next-label">A seguir</span>
+                <h2 class="next-title">{{ nextLesson?.titulo }}</h2>
+                <div class="next-actions">
+                    <button class="btn-play-next" (click)="goToNextLesson()">Reproduzir</button>
+                    <button class="btn-cancel" (click)="cancelNext()">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -111,32 +90,17 @@
 
     <div class="sidebar">
         <h3 class="curso-nome ms-2 mt-3">{{ curso?.nome }}</h3>
-        <p class="curso-desc ms-2">{{ curso?.descricao }}</p>
-
         <div class="aulas-lista">
-            <mat-accordion displayMode="flat" multi="false">
-                <mat-expansion-panel *ngFor="let sessao of sessoesView" [expanded]="sessao.expanded"
-                    class="custom-panel">
-
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>{{ sessao.nome }}</mat-panel-title>
-                    </mat-expansion-panel-header>
-
-                    <div class="aula-item" *ngFor="let aula of sessao.aulas"
-                        [class.ativa]="aulaSelecionada?.id === aula.id" [class.concluida]="checkConcluido(aula.id)"
-                        (click)="selecionarAula(aula)">
-                        <div class="left">
-                            <i class="bi me-2 icon-status" [class.bi-check-circle-fill]="checkConcluido(aula.id)"
-                                [class.bi-play-circle]="!checkConcluido(aula.id)">
-                            </i> <span class="titulo">{{ aula.titulo }}</span>
-                        </div>
-                        <div class="right">
-                            <span class="duracao">{{ aula.duracao || '5min' }}</span>
-                        </div>
+            <mat-accordion displayMode="flat">
+                <mat-expansion-panel *ngFor="let sessao of sessoesView" [expanded]="sessao.expanded" class="custom-panel">
+                    <mat-expansion-panel-header><mat-panel-title>{{ sessao.nome }}</mat-panel-title></mat-expansion-panel-header>
+                    <div class="aula-item" *ngFor="let aula of sessao.aulas" [class.ativa]="aulaSelecionada?.id === aula.id" (click)="selecionarAula(aula)">
+                        <div class="left"><i class="bi bi-play-circle me-2"></i> {{ aula.titulo }}</div>
+                        <div class="right">{{ aula.duracao }}</div>
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
-        <button class="btn-voltar" (click)="voltar()">Voltar ao Curso</button>
+        <button class="btn-voltar" (click)="voltar()">Voltar</button>
     </div>
 </div>
