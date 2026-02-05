@@ -2,17 +2,7 @@
 
     <div class="video-area" 
          (mouseenter)="showControls = true" 
-         (mouseleave)="showControls = false"
-         (contextmenu)="preventRightClick($event)">
-
-        <div class="security-blackout" *ngIf="isWindowHidden">
-            <div class="blackout-content">
-                <i class="bi bi-eye-slash-fill"></i>
-                <h3>Conteúdo Protegido</h3>
-                <p>O vídeo é pausado automaticamente quando a janela perde o foco.</p>
-                <small>Volte para esta aba para continuar assistindo.</small>
-            </div>
-        </div>
+         (mouseleave)="showControls = false">
 
         <video #videoRef 
             class="video-player" 
